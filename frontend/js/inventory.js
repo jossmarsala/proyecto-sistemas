@@ -27,22 +27,22 @@ function renderKPIs() {
   document.getElementById('inv-kpis').innerHTML = `
     <div class="bento-card bento-card--dark bento-flex-col">
       <div class="bento-card-title bento-card-title-white">Total Productos</div>
-      <div class="bento-card-value-large" style="margin-top:auto">\${total}</div>
-      <div style="font-size: 0.85rem; color: var(--clr-gray); font-weight: 500; margin-top: 4px;">\${activos} activos</div>
+      <div class="bento-card-value-large" style="margin-top:auto">${total}</div>
+      <div style="font-size: 0.85rem; color: var(--clr-gray); font-weight: 500; margin-top: 4px;">${activos} activos</div>
     </div>
     <div class="bento-card bento-card--white bento-glow-yellow bento-flex-col">
       <div class="bento-card-title">Stock Bajo</div>
-      <div class="bento-card-value-large" style="margin-top:auto">\${bajo}</div>
+      <div class="bento-card-value-large" style="margin-top:auto">${bajo}</div>
       <div style="font-size: 0.85rem; color: var(--clr-gray); font-weight: 500; margin-top: 4px;">Bajo mínimo de seguridad</div>
     </div>
     <div class="bento-card bento-card--white bento-glow-blue-bottom bento-flex-col">
       <div class="bento-card-title">Valor en Stock</div>
-      <div class="bento-card-value" style="margin-top:auto">\${formatCurrency(valorStock)}</div>
+      <div class="bento-card-value" style="margin-top:auto">${formatCurrency(valorStock)}</div>
       <div style="font-size: 0.85rem; color: var(--clr-gray); font-weight: 500; margin-top: 4px;">Precio costo</div>
     </div>
     <div class="bento-card bento-card--white bento-glow-yellow bento-flex-col">
       <div class="bento-card-title">Categorías</div>
-      <div class="bento-card-value-large" style="margin-top:auto">\${new Set(allProducts.map(p=>p.categoria).filter(Boolean)).size}</div>
+      <div class="bento-card-value-large" style="margin-top:auto">${new Set(allProducts.map(p=>p.categoria).filter(Boolean)).size}</div>
       <div style="font-size: 0.85rem; color: var(--clr-gray); font-weight: 500; margin-top: 4px;">Familias de productos</div>
     </div>
   `;
@@ -64,15 +64,13 @@ function selectCat(el) {
 
 function filterTable(q) {
   const query  = (q ?? document.getElementById('inv-search').value).toLowerCase();
-  const lowOnly = document.getElementById('low-stock-only').checked;
 
   filtered = allProducts.filter(p => {
     const matchQ = !query || p.nombre.toLowerCase().includes(query) ||
                    (p.sku && p.sku.toLowerCase().includes(query)) ||
                    (p.categoria && p.categoria.toLowerCase().includes(query));
     const matchC = !currentCat || p.categoria === currentCat;
-    const matchL = !lowOnly || p.cantidad_actual <= p.stock_minimo_seguridad;
-    return matchQ && matchC && matchL;
+    return matchQ && matchC;
   });
 
   renderTable(filtered);

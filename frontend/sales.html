@@ -78,83 +78,85 @@
       <!-- Product search -->
       <div class="bento-card bento-card--white bento-glow-yellow" style="flex:0 0 auto">
         <div class="bento-card-title"><i class="ph ph-magnifying-glass"></i> Buscador de Productos</div>
-        <div style="padding-bottom:12px">
+        <div style="padding-bottom:12px; margin-top: 12px;">
           <div class="search-bar" style="position:relative">
             <span class="search-icon"><i class="ph ph-magnifying-glass"></i></span>
-            <input type="text" class="search-input" id="product-search" placeholder="Buscá por nombre o SKU…" autocomplete="off"/>
+            <input type="text" class="search-input" id="product-search" placeholder="Buscá por nombre o SKU…" autocomplete="off" style="font-size: 1.05rem; padding: 16px 16px 16px 42px;"/>
             <div class="search-results" id="search-results"></div>
           </div>
         </div>
       </div>
 
       <!-- Sales history table -->
-      <div class="bento-card bento-card--white bento-glow-blue-right" style="flex:1">
-        <div class="bento-card-title"><i class="ph ph-clipboard-text"></i> Historial de Ventas</div>
-        <div style="padding:0">
-          <div style="overflow-x:auto">
-            <table>
-              <thead>
-                <tr>
-                  <th>#</th><th>Fecha / Hora</th><th>Cliente</th>
-                  <th>Pago</th><th>Estado</th><th style="text-align:right">Total</th>
-                </tr>
-              </thead>
-              <tbody id="sales-history-body">
-                <tr><td colspan="6" style="text-align:center;padding:30px"><div class="spinner"></div></td></tr>
-              </tbody>
-            </table>
-          </div>
+      <div class="bento-card bento-card--white bento-glow-blue-right" style="flex:1; padding: 0; display: flex; flex-direction: column; overflow: hidden;">
+        <div class="bento-card-title" style="padding: 24px 26px 12px 26px; border-bottom: 1px solid rgba(0,0,0,0.04); margin-bottom: 0;"><i class="ph ph-clipboard-text"></i> Historial de Ventas</div>
+        <div class="table-wrapper" style="border:none; box-shadow:none; border-radius:0; flex:1; overflow-y:auto;">
+          <table style="margin: 0; width: 100%;">
+            <thead>
+              <tr>
+                <th>#</th><th>Fecha / Hora</th><th>Cliente</th>
+                <th>Pago</th><th>Estado</th><th style="text-align:right">Total</th>
+              </tr>
+            </thead>
+            <tbody id="sales-history-body">
+              <tr><td colspan="6" style="text-align:center;padding:30px"><div class="spinner"></div></td></tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
 
     <!-- RIGHT: Cart -->
     <div class="bento-right">
-      <div class="bento-card bento-card--white bento-glow-blue-bottom" style="flex: 1;">
-        <div class="bento-card-title" style="display: flex; align-items: center;"><i class="ph ph-shopping-cart"></i> Carrito <span id="cart-count" class="badge badge-blue" style="margin-left:auto">0 items</span></div>
-
-        <div id="cart-items" style="flex: 1; overflow-y: auto; margin-top: 12px; margin-bottom: 24px;">
-        <div class="empty-state">
-          <div class="empty-state__icon"><i class="ph ph-shopping-cart"></i></div>
-          <div class="empty-state__text">Buscá un producto para empezar</div>
+      <div class="bento-card bento-card--white bento-glow-blue-bottom bento-card-tall" style="display: flex; flex-direction: column;">
+        <div class="bento-card-title" style="display: flex; align-items: center; margin-bottom: 16px;">
+          <i class="ph ph-shopping-cart"></i> Carrito 
+          <span id="cart-count" class="badge badge-blue" style="margin-left:auto; font-size: 0.85rem;">0 items</span>
         </div>
-      </div>
 
-      <div style="margin-top: auto;">
-        <div class="cart-totals" id="cart-totals" style="display:none">
-          <div class="cart-total-row">
-            <span>Subtotal</span>
-            <span id="cart-subtotal">$0</span>
-          </div>
-          <div class="cart-total-row total">
-            <span>TOTAL</span>
-            <span id="cart-total">$0</span>
+        <div id="cart-items" style="flex: 1; overflow-y: auto; margin-bottom: 24px; display: flex; flex-direction: column; gap: 8px;">
+          <div class="empty-state">
+            <div class="empty-state__icon"><i class="ph ph-shopping-cart"></i></div>
+            <div class="empty-state__text">Buscá un producto para empezar</div>
           </div>
         </div>
 
-        <div class="divider"></div>
+        <div style="margin-top: auto;">
+          <div class="cart-totals" id="cart-totals" style="display:none">
+            <div class="cart-total-row">
+              <span>Subtotal</span>
+              <span id="cart-subtotal">$0</span>
+            </div>
+            <div class="cart-total-row total">
+              <span>TOTAL</span>
+              <span id="cart-total">$0</span>
+            </div>
+          </div>
 
-        <!-- Payment method -->
-        <div style="font-size:.78rem;font-weight:600;margin-bottom:8px">Método de pago</div>
-        <div class="payment-methods">
-          <button class="payment-btn selected" data-pay="Efectivo" onclick="selectPayment(this)">
-            <span class="pay-icon"><i class="ph ph-currency-dollar"></i></span> Efectivo
-          </button>
-          <button class="payment-btn" data-pay="Tarjeta" onclick="selectPayment(this)">
-            <span class="pay-icon"><i class="ph ph-credit-card"></i></span> Tarjeta
-          </button>
-          <button class="payment-btn" data-pay="Cuenta Corriente" onclick="selectPayment(this)">
-            <span class="pay-icon"><i class="ph ph-notebook"></i></span> Cta. Cte.
+          <div style="height: 1px; background: rgba(0,0,0,0.06); margin: 20px 0;"></div>
+
+          <!-- Payment method -->
+          <div style="font-size:.78rem;font-weight:600;margin-bottom:12px; color: var(--clr-gray);">MÉTODO DE PAGO</div>
+          <div class="payment-methods" style="margin-bottom: 20px;">
+            <button class="payment-btn selected" data-pay="Efectivo" onclick="selectPayment(this)">
+              <span class="pay-icon"><i class="ph ph-currency-dollar"></i></span> Efectivo
+            </button>
+            <button class="payment-btn" data-pay="Tarjeta" onclick="selectPayment(this)">
+              <span class="pay-icon"><i class="ph ph-credit-card"></i></span> Tarjeta
+            </button>
+            <button class="payment-btn" data-pay="Cuenta Corriente" onclick="selectPayment(this)">
+              <span class="pay-icon"><i class="ph ph-notebook"></i></span> Cta. Cte.
+            </button>
+          </div>
+
+          <div class="form-group" style="margin-bottom:20px">
+            <input class="form-input" id="sale-ref" placeholder="Referencia (opcional)…"/>
+          </div>
+
+          <button class="btn btn-accent btn-lg" id="btn-checkout" onclick="checkout()" style="width: 100%; font-weight: 700;">
+            <i class="ph-fill ph-lightning" style="font-size: 1.1rem;"></i> Finalizar Venta
           </button>
         </div>
-
-        <div class="form-group" style="margin-bottom:10px">
-          <input class="form-input" id="sale-ref" placeholder="Referencia (opcional)…"/>
-        </div>
-
-        <button class="btn btn-accent btn-lg w-full" id="btn-checkout" onclick="checkout()">
-          <i class="ph-fill ph-lightning"></i> Finalizar y Guardar
-        </button>
       </div>
     </div>
   </div>
@@ -177,7 +179,7 @@
     </div>
     <div class="modal-footer">
       <button class="btn btn-ghost" onclick="closeModal('modal-client')">Cancelar</button>
-      <button class="btn btn-primary" onclick="openModal('modal-new-client')">+ Nuevo cliente</button>
+      <button class="btn btn-ghost" onclick="openModal('modal-new-client')">+ Nuevo cliente</button>
     </div>
   </div>
 </div>

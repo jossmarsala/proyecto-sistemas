@@ -85,80 +85,51 @@
 
   <!-- ════════ TAB 1: Stock Break ════════════════════════════════════════════ -->
   <div class="proj-section visible" id="tab-stockbreak">
-    <div class="flex justify-between items-center mb-16">
-      <div class="text-muted" style="font-size:.85rem">
-        Fórmula: <code>Días Restantes = Stock Actual ÷ Promedio Ventas Diarias</code>
+    <div class="bento-layout fade-in">
+      <div class="bento-left">
+        <div class="bento-card bento-card--white bento-glow-yellow" style="padding:0; overflow:hidden; flex:1;">
+          <div class="table-wrapper" style="border:none; box-shadow:none; border-radius:0; height:100%;">
+            <table style="margin:0;">
+              <thead>
+                <tr>
+                  <th>Producto</th>
+                  <th style="text-align:right">Stock Actual</th>
+                  <th style="text-align:right">Prom. Diario</th>
+                  <th style="text-align:right">Días Restantes</th>
+                  <th style="text-align:right">Reposición</th>
+                  <th style="text-align:center">Estado</th>
+                </tr>
+              </thead>
+              <tbody id="sb-tbody">
+                <tr><td colspan="6" style="text-align:center;padding:40px"><div class="spinner"></div></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
-      <button class="btn btn-ghost btn-sm" onclick="loadStockBreak()"><i class="ph ph-arrows-clockwise"></i> Recalcular</button>
-    </div>
-
-    <!-- Summary KPIs -->
-    <div class="kpi-grid" id="sb-kpis" style="grid-template-columns:repeat(3,1fr);margin-bottom:20px">
-      <div class="kpi-card kpi-card--dark skeleton" style="height:90px"></div>
-      <div class="kpi-card kpi-card--pink skeleton" style="height:90px"></div>
-      <div class="kpi-card kpi-card--blue skeleton" style="height:90px"></div>
-    </div>
-
-    <div class="table-wrapper">
-      <table>
-        <thead>
-          <tr>
-            <th>Producto</th>
-            <th style="text-align:right">Stock Actual</th>
-            <th style="text-align:right">Prom. Diario</th>
-            <th style="text-align:right">Días Restantes</th>
-            <th style="text-align:right">Reposición</th>
-            <th style="text-align:center">Estado</th>
-          </tr>
-        </thead>
-        <tbody id="sb-tbody">
-          <tr><td colspan="6" style="text-align:center;padding:40px"><div class="spinner"></div></td></tr>
-        </tbody>
-      </table>
+      <div class="bento-right">
+        <div class="bento-card bento-card--white bento-glow-blue-right">
+          <div class="bento-card-title" style="margin-bottom: 8px;">Fórmula de Predicción</div>
+          <div class="text-muted" style="font-size:.85rem; line-height: 1.4; margin-bottom: 16px;">
+            <code>Días Restantes = Stock Actual ÷ Promedio Ventas Diarias</code>
+          </div>
+          <button class="btn btn-accent w-full" onclick="loadStockBreak()" style="width: 100%;"><i class="ph ph-arrows-clockwise"></i> Recalcular</button>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 24px;" id="sb-kpis">
+          <div class="kpi-card kpi-card--dark skeleton" style="height:90px"></div>
+          <div class="kpi-card kpi-card--pink skeleton" style="height:90px"></div>
+          <div class="kpi-card kpi-card--blue skeleton" style="height:90px"></div>
+        </div>
+      </div>
     </div>
   </div>
 
   <!-- ════════ TAB 2: What-If ════════════════════════════════════════════════ -->
   <div class="proj-section" id="tab-whatif">
-    <div class="whatif-layout">
-
-      <!-- Slider controls -->
-      <div class="card" style="display:flex;flex-direction:column;gap:20px">
-        <div>
-          <div class="fw-700 mb-8" style="font-size:.95rem"><i class="ph ph-gear"></i>️ Parámetros del escenario</div>
-          <div class="text-muted" style="font-size:.78rem">Los cambios se simulan en memoria. No se modifica la BD.</div>
-        </div>
-
-        <div class="slider-wrap">
-          <div class="slider-header">
-            <label class="slider-label"><i class="ph ph-trend-up"></i> Inflación estimada</label>
-            <span class="slider-value" id="inf-display">0%</span>
-          </div>
-          <input type="range" id="slider-inflacion" min="0" max="150" value="0"
-            oninput="document.getElementById('inf-display').textContent=this.value+'%'; scheduleSimulation()"/>
-        </div>
-
-        <div class="slider-wrap">
-          <div class="slider-header">
-            <label class="slider-label"><i class="ph ph-trend-down"></i><i class="ph ph-trend-up"></i> Variación de demanda</label>
-            <span class="slider-value" id="dem-display">0%</span>
-          </div>
-          <input type="range" id="slider-demanda" min="-50" max="50" value="0"
-            oninput="document.getElementById('dem-display').textContent=(this.value>0?'+':'')+this.value+'%'; scheduleSimulation()"/>
-        </div>
-
-        <div class="form-group">
-          <label class="form-label"><i class="ph ph-money"></i> Costos fijos adicionales ($)</label>
-          <input class="form-input" id="input-costos" type="number" min="0" value="0" placeholder="0" oninput="scheduleSimulation()"/>
-        </div>
-
-        <button class="btn btn-accent" onclick="runSimulation()"><i class="ph-fill ph-lightning"></i> Probar escenario</button>
-      </div>
-
-      <!-- Results panel -->
-      <div>
+    <div class="bento-layout fade-in">
+      <div class="bento-left">
         <!-- Big result card -->
-        <div class="scenario-result mb-16" id="sim-result-card">
+        <div class="scenario-result mb-16" id="sim-result-card" style="border-radius: var(--radius-lg);">
           <div class="scenario-result__title">RENTABILIDAD SIMULADA</div>
           <div class="scenario-result__value" id="sim-rent-val">—</div>
           <div class="scenario-result__delta" id="sim-rent-delta">Ajustá los sliders para comenzar</div>
@@ -183,12 +154,12 @@
         </div>
 
         <!-- Product-level table -->
-        <div class="card" style="padding:0;overflow:hidden">
-          <div style="padding:16px 20px;font-weight:700;font-size:.88rem;border-bottom:1px solid rgba(0,0,0,.06)">
-            Impacto por Producto
-          </div>
-          <div style="overflow-x:auto">
-            <table>
+        <div class="bento-card bento-card--white bento-glow-yellow" style="padding:0; overflow:hidden; flex:1;">
+          <div class="table-wrapper" style="border:none; box-shadow:none; border-radius:0; height:100%;">
+            <div style="padding:16px 20px;font-weight:700;font-size:.88rem;border-bottom:1px solid rgba(0,0,0,.06)">
+              Impacto por Producto
+            </div>
+            <table style="margin:0;">
               <thead>
                 <tr>
                   <th>Producto</th>
@@ -204,44 +175,85 @@
           </div>
         </div>
       </div>
+
+      <div class="bento-right">
+        <!-- Slider controls -->
+        <div class="bento-card bento-card--white bento-glow-blue-right" style="display:flex;flex-direction:column;gap:20px">
+          <div>
+            <div class="bento-card-title"><i class="ph ph-gear"></i> Parámetros de Escenario</div>
+            <div class="text-muted" style="font-size:.78rem">Los cambios se simulan en memoria. No se modifica la BD.</div>
+          </div>
+
+          <div class="slider-wrap">
+            <div class="slider-header">
+              <label class="slider-label"><i class="ph ph-trend-up"></i> Inflación estimada</label>
+              <span class="slider-value" id="inf-display">0%</span>
+            </div>
+            <input type="range" id="slider-inflacion" min="0" max="150" value="0"
+              oninput="document.getElementById('inf-display').textContent=this.value+'%'; scheduleSimulation()"/>
+          </div>
+
+          <div class="slider-wrap">
+            <div class="slider-header">
+              <label class="slider-label"><i class="ph ph-trend-down"></i><i class="ph ph-trend-up"></i> Variación demanda</label>
+              <span class="slider-value" id="dem-display">0%</span>
+            </div>
+            <input type="range" id="slider-demanda" min="-50" max="50" value="0"
+              oninput="document.getElementById('dem-display').textContent=(this.value>0?'+':'')+this.value+'%'; scheduleSimulation()"/>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label"><i class="ph ph-money"></i> Costos fijos adicionales ($)</label>
+            <input class="form-input" id="input-costos" type="number" min="0" value="0" placeholder="0" oninput="scheduleSimulation()"/>
+          </div>
+
+          <button class="btn btn-accent" onclick="runSimulation()" style="width: 100%;"><i class="ph-fill ph-lightning"></i> Probar escenario</button>
+        </div>
+      </div>
     </div>
   </div>
 
   <!-- ════════ TAB 3: Trend chart ════════════════════════════════════════════ -->
   <div class="proj-section" id="tab-trend">
-    <div class="card fade-in" style="margin-bottom:20px">
-      <div class="flex justify-between items-center mb-16">
-        <div>
-          <div class="fw-700" style="font-size:.95rem">Ingresos diarios (histórico)</div>
-          <div class="text-muted" style="font-size:.78rem">Desde los últimos <span id="trend-days-label">30</span> días</div>
-        </div>
-        <div class="flex gap-8">
-          <select class="form-select" id="trend-period" onchange="loadTrendChart()" style="min-width:130px">
-            <option value="7">7 días</option>
-            <option value="30" selected>30 días</option>
-            <option value="90">90 días</option>
-            <option value="180">180 días</option>
-          </select>
+    <div class="bento-layout fade-in">
+      <div class="bento-left">
+        <div class="bento-card bento-card--white bento-glow-yellow" style="display: flex; flex-direction: column; flex: 1;">
+          <div class="flex justify-between items-center mb-16">
+            <div>
+              <div class="bento-card-title">Ingresos diarios (histórico)</div>
+              <div class="text-muted" style="font-size:.78rem">Desde los últimos <span id="trend-days-label">30</span> días</div>
+            </div>
+            <div class="flex gap-8">
+              <select class="form-select" id="trend-period" onchange="loadTrendChart()" style="min-width:130px">
+                <option value="7">7 días</option>
+                <option value="30" selected>30 días</option>
+                <option value="90">90 días</option>
+                <option value="180">180 días</option>
+              </select>
+            </div>
+          </div>
+          <div class="chart-container" style="height:260px">
+            <canvas id="trend-chart"></canvas>
+          </div>
         </div>
       </div>
-      <div class="chart-container" style="height:260px">
-        <canvas id="trend-chart"></canvas>
-      </div>
-    </div>
 
-    <div class="card fade-in" style="padding:0;overflow:hidden">
-      <div style="padding:16px 20px;font-weight:700;font-size:.88rem;border-bottom:1px solid rgba(0,0,0,.06)">
-        Resumen por período
-      </div>
-      <div style="overflow-x:auto">
-        <table>
-          <thead>
-            <tr><th>Día</th><th style="text-align:right">Nº Ventas</th><th style="text-align:right">Ingreso</th></tr>
-          </thead>
-          <tbody id="trend-tbody">
-            <tr class="no-data-row"><td colspan="3">Cargando…</td></tr>
-          </tbody>
-        </table>
+      <div class="bento-right">
+        <div class="bento-card bento-card--white bento-glow-blue-right" style="padding:0;overflow:hidden; flex: 1; display: flex; flex-direction: column;">
+          <div style="padding:16px 20px;font-weight:700;font-size:.88rem;border-bottom:1px solid rgba(0,0,0,.06)">
+            Resumen por período
+          </div>
+          <div class="table-wrapper" style="border:none; box-shadow:none; border-radius:0; flex:1; overflow-y:auto;">
+            <table style="margin:0;">
+              <thead>
+                <tr><th>Día</th><th style="text-align:right">Nº Ventas</th><th style="text-align:right">Ingreso</th></tr>
+              </thead>
+              <tbody id="trend-tbody">
+                <tr class="no-data-row"><td colspan="3">Cargando…</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
     </div>
   </div>
