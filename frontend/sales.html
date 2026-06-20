@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FARO — Terminal de Ventas</title>
+  <meta name="description" content="Terminal de punto de venta FARO. Búsqueda rápida de productos, carrito y finalización de venta."/>
+  <link rel="stylesheet" href="/static/css/style.css"/>
+  <style>
+    .client-tag {
+      display: flex; align-items: center; gap: 8px;
+      background: rgba(39,39,186,.07); border-radius: var(--radius-pill);
+      padding: 5px 12px; font-size: .8rem; font-weight: 600; color: var(--clr-blue);
+    }
+    .client-clear { cursor: pointer; font-size: 12px; opacity: .7; }
+    .client-clear:hover { opacity: 1; }
+    .sale-history-row { cursor: pointer; }
+    .sale-history-row:hover td { background: rgba(39,39,186,.04); }
+  </style>
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar__cutout">
+    <svg width="30" height="80" viewBox="0 0 30 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0,0 C0,25 30,15 30,40 C30,65 0,55 0,80 Z" fill="#F9F8F7" />
+      <path d="M0,0 C0,25 30,15 30,40 C30,65 0,55 0,80" stroke="#3b82f6" stroke-width="1.5" />
+    </svg>
+  </div>
+  <div class="sidebar__brand">
+    <span class="sidebar__name">FARO</span>
+    <span class="sidebar__sub">stock</span>
+  </div>
+  <nav class="sidebar__nav">
+    <a href="/static/dashboard.html" class="nav-item" data-page="dashboard">
+      <i class="ph ph-house nav-icon"></i> Inicio
+    </a>
+    <div class="nav-divider"></div>
+    <a href="/static/inventory.html" class="nav-item" data-page="inventory">
+      <i class="ph ph-wrench nav-icon"></i> Inventario
+    </a>
+    <div class="nav-divider"></div>
+    <a href="/static/sales.html" class="nav-item" data-page="sales">
+      <i class="ph ph-note-pencil nav-icon"></i> Ventas
+    </a>
+    <div class="nav-divider"></div>
+    <a href="/static/projections.html" class="nav-item" data-page="projections">
+      <i class="ph ph-eye nav-icon"></i> Proyecciones
+      <span class="nav-badge" id="alert-badge" style="display:none">0</span>
+    </a>
+  </nav>
+</aside>
+
+<main class="main-content">
+  <div class="page-header fade-in">
+    <div>
+      <h1 class="page-title">Terminal de Ventas</h1>
+      <p class="page-subtitle">Registrá una venta nueva · Historial disponible abajo</p>
+    </div>
+    <div class="flex gap-8 items-center">
+      <div id="client-display" style="display:none" class="client-tag">
+        <span><i class="ph ph-user"></i></span>
+        <span id="client-name-tag"></span>
+        <span class="client-clear" onclick="clearClient()"><i class="ph ph-x"></i></span>
+      </div>
+      <button class="btn btn-ghost btn-sm" onclick="openModal('modal-client')"><i class="ph ph-user"></i> Seleccionar cliente</button>
+    </div>
+  </div>
+
+  <!-- POS LAYOUT -->
+  <div class="pos-layout fade-in">
+
+    <!-- LEFT: Search + Results -->
+    <div style="display:flex;flex-direction:column;gap:16px">
+
+      <!-- Product search -->
+      <div class="pos-panel" style="flex:0 0 auto">
+        <div class="pos-panel__header"><i class="ph ph-magnifying-glass"></i> Buscador de Productos</div>
+        <div class="pos-panel__body" style="padding-bottom:12px">
+          <div class="search-bar" style="position:relative">
+            <span class="search-icon"><i class="ph ph-magnifying-glass"></i></span>
+            <input type="text" class="search-input" id="product-search" placeholder="Buscá por nombre o SKU…" autocomplete="off"/>
+            <div class="search-results" id="search-results"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sales history table -->
+      <div class="pos-panel" style="flex:1">
+        <div class="pos-panel__header"><i class="ph ph-clipboard-text"></i> Historial de Ventas</div>
+        <div class="pos-panel__body" style="padding:0">
+          <div style="overflow-x:auto">
+            <table>
+              <thead>
+                <tr>
+                  <th>#</th><th>Fecha / Hora</th><th>Cliente</th>
+                  <th>Pago</th><th>Estado</th><th style="text-align:right">Total</th>
+                </tr>
+              </thead>
+              <tbody id="sales-history-body">
+                <tr><td colspan="6" style="text-align:center;padding:30px"><div class="spinner"></div></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Cart -->
+    <div class="pos-panel">
+      <div class="pos-panel__header"><i class="ph ph-shopping-cart"></i> Carrito <span id="cart-count" class="badge badge-blue" style="margin-left:auto">0 items</span></div>
+
+      <div class="pos-panel__body" id="cart-items">
+        <div class="empty-state">
+          <div class="empty-state__icon"><i class="ph ph-shopping-cart"></i></div>
+          <div class="empty-state__text">Buscá un producto para empezar</div>
+        </div>
+      </div>
+
+      <div class="pos-panel__footer">
+        <div class="cart-totals" id="cart-totals" style="display:none">
+          <div class="cart-total-row">
+            <span>Subtotal</span>
+            <span id="cart-subtotal">$0</span>
+          </div>
+          <div class="cart-total-row total">
+            <span>TOTAL</span>
+            <span id="cart-total">$0</span>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- Payment method -->
+        <div style="font-size:.78rem;font-weight:600;margin-bottom:8px">Método de pago</div>
+        <div class="payment-methods">
+          <button class="payment-btn selected" data-pay="Efectivo" onclick="selectPayment(this)">
+            <span class="pay-icon"><i class="ph ph-currency-dollar"></i></span> Efectivo
+          </button>
+          <button class="payment-btn" data-pay="Tarjeta" onclick="selectPayment(this)">
+            <span class="pay-icon"><i class="ph ph-credit-card"></i></span> Tarjeta
+          </button>
+          <button class="payment-btn" data-pay="Cuenta Corriente" onclick="selectPayment(this)">
+            <span class="pay-icon"><i class="ph ph-notebook"></i></span> Cta. Cte.
+          </button>
+        </div>
+
+        <div class="form-group" style="margin-bottom:10px">
+          <input class="form-input" id="sale-ref" placeholder="Referencia (opcional)…"/>
+        </div>
+
+        <button class="btn btn-accent btn-lg w-full" id="btn-checkout" onclick="checkout()">
+          <i class="ph-fill ph-lightning"></i> Finalizar y Guardar
+        </button>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- MODAL: Select client -->
+<div class="modal-overlay" id="modal-client" onclick="if(event.target===this)closeModal('modal-client')">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 class="modal-title">Seleccionar Cliente</h2>
+      <button class="modal-close" onclick="closeModal('modal-client')"><i class="ph ph-x"></i></button>
+    </div>
+    <div class="search-bar mb-16" style="position:relative">
+      <span class="search-icon"><i class="ph ph-magnifying-glass"></i></span>
+      <input type="text" class="search-input" id="client-search-input" placeholder="Buscá por nombre…" oninput="searchClients(this.value)"/>
+    </div>
+    <div id="client-results" style="max-height:320px;overflow-y:auto">
+      <div class="spinner" style="margin:20px auto"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-client')">Cancelar</button>
+      <button class="btn btn-primary" onclick="openModal('modal-new-client')">+ Nuevo cliente</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: New client -->
+<div class="modal-overlay" id="modal-new-client" onclick="if(event.target===this)closeModal('modal-new-client')">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 class="modal-title">Nuevo Cliente</h2>
+      <button class="modal-close" onclick="closeModal('modal-new-client')"><i class="ph ph-x"></i></button>
+    </div>
+    <div class="modal-form">
+      <div class="two-col gap-12">
+        <div class="form-group"><label class="form-label">Nombre *</label><input class="form-input" id="nc-nombre" placeholder="Juan"/></div>
+        <div class="form-group"><label class="form-label">Apellido</label><input class="form-input" id="nc-apellido" placeholder="Pérez"/></div>
+      </div>
+      <div class="form-group"><label class="form-label">Teléfono</label><input class="form-input" id="nc-tel" placeholder="1112345678" type="tel"/></div>
+      <div class="form-group"><label class="form-label">Límite de Crédito ($)</label><input class="form-input" id="nc-credito" type="number" value="0" min="0"/></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-new-client')">Cancelar</button>
+      <button class="btn btn-primary" onclick="createClient()">Guardar cliente</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Sale detail -->
+<div class="modal-overlay" id="modal-sale-detail" onclick="if(event.target===this)closeModal('modal-sale-detail')">
+  <div class="modal" style="max-width:640px">
+    <div class="modal-header">
+      <h2 class="modal-title" id="sale-detail-title">Detalle de Venta</h2>
+      <button class="modal-close" onclick="closeModal('modal-sale-detail')"><i class="ph ph-x"></i></button>
+    </div>
+    <div id="sale-detail-body" style="overflow-x:auto">
+      <div class="spinner" style="margin:20px auto"></div>
+    </div>
+  </div>
+</div>
+
+<script src="/static/js/api.js"></script>
+<script src="/static/js/sales.js"></script>
+</body>
+</html>

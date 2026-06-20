@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FARO — Inventario</title>
+  <meta name="description" content="Inventario FARO: catálogo de productos, stock por sucursal, carga y actualización masiva de precios."/>
+  <link rel="stylesheet" href="/static/css/style.css"/>
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="sidebar__cutout">
+    <svg width="30" height="80" viewBox="0 0 30 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0,0 C0,25 30,15 30,40 C30,65 0,55 0,80 Z" fill="#F9F8F7" />
+      <path d="M0,0 C0,25 30,15 30,40 C30,65 0,55 0,80" stroke="#3b82f6" stroke-width="1.5" />
+    </svg>
+  </div>
+  <div class="sidebar__brand">
+    <span class="sidebar__name">FARO</span>
+    <span class="sidebar__sub">stock</span>
+  </div>
+  <nav class="sidebar__nav">
+    <a href="/static/dashboard.html" class="nav-item" data-page="dashboard">
+      <i class="ph ph-house nav-icon"></i> Inicio
+    </a>
+    <div class="nav-divider"></div>
+    <a href="/static/inventory.html" class="nav-item" data-page="inventory">
+      <i class="ph ph-wrench nav-icon"></i> Inventario
+    </a>
+    <div class="nav-divider"></div>
+    <a href="/static/sales.html" class="nav-item" data-page="sales">
+      <i class="ph ph-note-pencil nav-icon"></i> Ventas
+    </a>
+    <div class="nav-divider"></div>
+    <a href="/static/projections.html" class="nav-item" data-page="projections">
+      <i class="ph ph-eye nav-icon"></i> Proyecciones
+      <span class="nav-badge" id="alert-badge" style="display:none">0</span>
+    </a>
+  </nav>
+</aside>
+
+<main class="main-content">
+  <div class="page-header fade-in">
+    <div>
+      <h1 class="page-title">Inventario</h1>
+      <p class="page-subtitle">Catálogo de productos · Stock por sucursal · Gestión de precios</p>
+    </div>
+    <div class="flex gap-8">
+      <button class="btn btn-ghost btn-sm" onclick="openModal('modal-price-update')"><i class="ph ph-ruler"></i> Ajuste de precios</button>
+      <button class="btn btn-primary" onclick="openModal('modal-new-product')">+ Nuevo producto</button>
+    </div>
+  </div>
+
+  <!-- Quick stats bar -->
+  <div class="kpi-grid" id="inv-kpis" style="grid-template-columns:repeat(4,1fr);margin-bottom:20px">
+    <div class="kpi-card kpi-card--dark skeleton" style="height:90px"></div>
+    <div class="kpi-card kpi-card--blue skeleton" style="height:90px"></div>
+    <div class="kpi-card kpi-card--pink skeleton" style="height:90px"></div>
+    <div class="kpi-card kpi-card--accent skeleton" style="height:90px"></div>
+  </div>
+
+  <!-- Filters -->
+  <div class="card fade-in" style="padding:16px 22px;margin-bottom:16px">
+    <div class="flex gap-12 items-center flex-wrap">
+      <div class="search-bar" style="position:relative;flex:1;min-width:200px">
+        <span class="search-icon"><i class="ph ph-magnifying-glass"></i></span>
+        <input type="text" class="search-input" id="inv-search" placeholder="Buscá por nombre, SKU o categoría…" oninput="filterTable(this.value)"/>
+      </div>
+      <div class="filter-tags" id="cat-filters">
+        <span class="filter-tag active" data-cat="" onclick="selectCat(this)">Todos</span>
+      </div>
+      <label class="flex items-center gap-8" style="font-size:.82rem;font-weight:600;cursor:pointer">
+        <input type="checkbox" id="low-stock-only" onchange="filterTable()"> Solo stock bajo
+      </label>
+    </div>
+  </div>
+
+  <!-- Product table -->
+  <div class="table-wrapper fade-in">
+    <table id="product-table">
+      <thead>
+        <tr>
+          <th>SKU</th>
+          <th>Producto</th>
+          <th>Categoría</th>
+          <th style="text-align:right">Precio Costo</th>
+          <th style="text-align:right">Precio Venta</th>
+          <th>Stock</th>
+          <th style="text-align:center">Estado</th>
+          <th style="text-align:center">Acciones</th>
+        </tr>
+      </thead>
+      <tbody id="product-tbody">
+        <tr><td colspan="8" style="text-align:center;padding:40px"><div class="spinner"></div></td></tr>
+      </tbody>
+    </table>
+  </div>
+</main>
+
+<!-- MODAL: New product -->
+<div class="modal-overlay" id="modal-new-product" onclick="if(event.target===this)closeModal('modal-new-product')">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 class="modal-title">Nuevo Producto</h2>
+      <button class="modal-close" onclick="closeModal('modal-new-product')"><i class="ph ph-x"></i></button>
+    </div>
+    <div class="modal-form">
+      <div class="two-col gap-12">
+        <div class="form-group"><label class="form-label">Nombre *</label><input class="form-input" id="np-nombre" placeholder="Tornillo 5mm"/></div>
+        <div class="form-group"><label class="form-label">SKU</label><input class="form-input" id="np-sku" placeholder="FER-001"/></div>
+      </div>
+      <div class="form-group"><label class="form-label">Categoría</label><input class="form-input" id="np-cat" placeholder="Tornillería"/></div>
+      <div class="two-col gap-12">
+        <div class="form-group"><label class="form-label">Precio Costo ($) *</label><input class="form-input" id="np-costo" type="number" min="0" step="0.01" placeholder="100"/></div>
+        <div class="form-group"><label class="form-label">Precio Venta ($) *</label><input class="form-input" id="np-venta" type="number" min="0" step="0.01" placeholder="180"/></div>
+      </div>
+      <div class="two-col gap-12">
+        <div class="form-group"><label class="form-label">Stock inicial</label><input class="form-input" id="np-stock" type="number" min="0" placeholder="0"/></div>
+        <div class="form-group"><label class="form-label">Stock mínimo</label><input class="form-input" id="np-min" type="number" min="0" placeholder="10"/></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-new-product')">Cancelar</button>
+      <button class="btn btn-primary" onclick="createProduct()">Guardar producto</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Edit price -->
+<div class="modal-overlay" id="modal-edit-price" onclick="if(event.target===this)closeModal('modal-edit-price')">
+  <div class="modal" style="max-width:400px">
+    <div class="modal-header">
+      <h2 class="modal-title" id="edit-price-title">Editar Precio</h2>
+      <button class="modal-close" onclick="closeModal('modal-edit-price')"><i class="ph ph-x"></i></button>
+    </div>
+    <input type="hidden" id="edit-price-id"/>
+    <div class="modal-form">
+      <div class="form-group"><label class="form-label">Precio Costo ($)</label><input class="form-input" id="ep-costo" type="number" min="0" step="0.01"/></div>
+      <div class="form-group"><label class="form-label">Precio Venta ($)</label><input class="form-input" id="ep-venta" type="number" min="0" step="0.01"/></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-edit-price')">Cancelar</button>
+      <button class="btn btn-blue" onclick="savePrice()">Actualizar precios</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Global price update (CU05) -->
+<div class="modal-overlay" id="modal-price-update" onclick="if(event.target===this)closeModal('modal-price-update')">
+  <div class="modal" style="max-width:420px">
+    <div class="modal-header">
+      <h2 class="modal-title"><i class="ph ph-ruler"></i> Ajuste Global de Precios</h2>
+      <button class="modal-close" onclick="closeModal('modal-price-update')"><i class="ph ph-x"></i></button>
+    </div>
+    <p style="font-size:.85rem;color:#7C8294;margin-bottom:16px">
+      Aplica un porcentaje de aumento a todos los productos de una categoría o a todo el catálogo. Esta operación actualiza los precios en la base de datos.
+    </p>
+    <div class="modal-form">
+      <div class="form-group">
+        <label class="form-label">Categoría (vacío = todas)</label>
+        <input class="form-input" id="gp-cat" placeholder="Tornillería · Pinturas · etc."/>
+      </div>
+      <div class="slider-wrap">
+        <div class="slider-header">
+          <label class="slider-label">% de aumento</label>
+          <span class="slider-value" id="gp-pct-display">10%</span>
+        </div>
+        <input type="range" id="gp-pct" min="1" max="200" value="10" oninput="document.getElementById('gp-pct-display').textContent=this.value+'%'"/>
+      </div>
+      <div style="background:#fef9c3;border-radius:var(--radius-md);padding:12px;font-size:.8rem;color:#a16207">
+        <i class="ph-fill ph-warning"></i> Esta acción no afecta el <strong>precio histórico</strong> de ventas ya registradas.
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-price-update')">Cancelar</button>
+      <button class="btn btn-accent" onclick="applyGlobalPrice()">Aplicar ajuste</button>
+    </div>
+  </div>
+</div>
+
+<script src="/static/js/api.js"></script>
+<script src="/static/js/inventory.js"></script>
+</body>
+</html>

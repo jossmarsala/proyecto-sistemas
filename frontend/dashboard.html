@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FARO — Dashboard</title>
+  <meta name="description" content="Panel de control FARO: KPIs de ventas, alertas de stock y métricas en tiempo real."/>
+  <link rel="stylesheet" href="/static/css/style.css"/>
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+</head>
+<body>
+
+<!-- ══ SIDEBAR ═══════════════════════════════════════════════════════════ -->
+<aside class="sidebar">
+  <div class="sidebar__cutout">
+    <svg width="30" height="80" viewBox="0 0 30 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0,0 C0,25 30,15 30,40 C30,65 0,55 0,80 Z" fill="#F9F8F7" />
+      <path d="M0,0 C0,25 30,15 30,40 C30,65 0,55 0,80" stroke="#3b82f6" stroke-width="1.5" />
+    </svg>
+  </div>
+  <div class="sidebar__brand">
+    <span class="sidebar__name">FARO</span>
+    <span class="sidebar__sub">stock</span>
+  </div>
+  <nav class="sidebar__nav">
+    <a href="/static/dashboard.html" class="nav-item" data-page="dashboard">
+      <i class="ph ph-house nav-icon"></i> Inicio
+    </a>
+    <div class="nav-divider"></div>
+    <a href="/static/inventory.html" class="nav-item" data-page="inventory">
+      <i class="ph ph-wrench nav-icon"></i> Inventario
+    </a>
+    <div class="nav-divider"></div>
+    <a href="/static/sales.html" class="nav-item" data-page="sales">
+      <i class="ph ph-note-pencil nav-icon"></i> Ventas
+    </a>
+    <div class="nav-divider"></div>
+    <a href="/static/projections.html" class="nav-item" data-page="projections">
+      <i class="ph ph-eye nav-icon"></i> Proyecciones
+      <span class="nav-badge" id="alert-badge" style="display:none">0</span>
+    </a>
+  </nav>
+</aside>
+
+<!-- ══ MAIN CONTENT ═══════════════════════════════════════════════════════ -->
+<main class="main-content">
+
+  <div class="page-header fade-in">
+    <div>
+      <h1 class="page-title">Dashboard</h1>
+      <p class="page-subtitle">Vista general del negocio en tiempo real</p>
+    </div>
+    <div class="flex gap-8">
+      <select class="form-select" id="sucursal-select" style="min-width:160px">
+        <option value="">Todas las sucursales</option>
+      </select>
+      <select class="form-select" id="period-select" style="min-width:130px">
+        <option value="7">Últimos 7 días</option>
+        <option value="30" selected>Últimos 30 días</option>
+        <option value="90">Últimos 90 días</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- KPI Grid -->
+  <div class="kpi-grid fade-in" id="kpi-grid">
+    <div class="kpi-card kpi-card--dark skeleton" style="height:120px"></div>
+    <div class="kpi-card kpi-card--blue skeleton" style="height:120px"></div>
+    <div class="kpi-card kpi-card--pink skeleton" style="height:120px"></div>
+    <div class="kpi-card kpi-card--accent skeleton" style="height:120px"></div>
+  </div>
+
+  <!-- Charts + Alerts row -->
+  <div class="two-col" style="margin-bottom:24px">
+
+    <!-- Revenue chart -->
+    <div class="card fade-in">
+      <div class="flex justify-between items-center mb-16">
+        <div>
+          <div class="fw-700" style="font-size:.95rem">Ingresos diarios</div>
+          <div class="text-muted" style="font-size:.78rem">Tendencia de los últimos días</div>
+        </div>
+      </div>
+      <div class="chart-container" style="height:180px">
+        <canvas id="revenue-chart"></canvas>
+      </div>
+    </div>
+
+    <!-- Alerts panel -->
+    <div class="card fade-in" style="display:flex;flex-direction:column">
+      <div class="flex justify-between items-center mb-16">
+        <div>
+          <div class="fw-700" style="font-size:.95rem">Alertas activas</div>
+          <div class="text-muted" style="font-size:.78rem">Stock mínimo · Crédito</div>
+        </div>
+        <button class="btn btn-ghost btn-sm" onclick="loadAlerts()"><i class="ph ph-arrows-clockwise"></i> Actualizar</button>
+      </div>
+      <div id="alerts-container" style="flex:1;overflow-y:auto;max-height:220px">
+        <div class="spinner" style="margin-top:40px"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom row: Top products + Recent sales -->
+  <div class="two-col">
+
+    <!-- Top products bar chart -->
+    <div class="card fade-in">
+      <div class="fw-700 mb-16" style="font-size:.95rem">Top Productos Vendidos</div>
+      <div class="chart-container" style="height:180px">
+        <canvas id="top-products-chart"></canvas>
+      </div>
+    </div>
+
+    <!-- Recent sales table -->
+    <div class="card fade-in" style="padding:0;overflow:hidden">
+      <div class="flex justify-between items-center" style="padding:18px 22px 14px">
+        <div class="fw-700" style="font-size:.95rem">Ventas recientes</div>
+        <a href="/static/sales.html" class="btn btn-ghost btn-sm">Ver todas <i class="ph ph-arrow-right"></i></a>
+      </div>
+      <div style="overflow-x:auto">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Fecha</th>
+              <th>Cliente</th>
+              <th>Pago</th>
+              <th style="text-align:right">Total</th>
+            </tr>
+          </thead>
+          <tbody id="recent-sales-body">
+            <tr><td colspan="5" style="text-align:center;padding:30px">
+              <div class="spinner"></div>
+            </td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<script src="/static/js/api.js"></script>
+<script src="/static/js/dashboard.js"></script>
+</body>
+</html>

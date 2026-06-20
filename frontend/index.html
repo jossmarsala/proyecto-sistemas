@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FARO — Sistema de Gestión Ferretera</title>
+  <meta name="description" content="FARO: Sistema integral de control de inventario y proyección de negocio para ferreterías."/>
+  <link rel="stylesheet" href="/static/css/style.css"/>
+  <style>
+    body { display:flex; align-items:center; justify-content:center; min-height:100vh; background:var(--clr-dark); }
+    .splash {
+      text-align:center; color:#fff;
+      animation: fadeIn .6s ease;
+    }
+    .splash-logo {
+      width:72px; height:72px; background:var(--clr-blue); border-radius:20px;
+      display:grid; place-items:center; font-size:36px; margin:0 auto 20px;
+      box-shadow: 0 0 40px rgba(39,39,186,.5);
+    }
+    .splash-title { font-size:2.5rem; font-weight:800; letter-spacing:-1px; }
+    .splash-sub { font-family:var(--font-secondary); color:var(--clr-gray); margin-top:6px; font-size:1rem; }
+    .splash-bar {
+      width:180px; height:3px; background:rgba(255,255,255,.1); border-radius:99px;
+      margin:28px auto 0; overflow:hidden;
+    }
+    .splash-bar__fill {
+      height:100%; background:var(--clr-accent); border-radius:99px;
+      animation: loadBar 1.2s ease forwards;
+    }
+    @keyframes loadBar { from { width:0 } to { width:100% } }
+  </style>
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+</head>
+<body>
+  <div class="splash">
+    <div class="splash-logo"><i class="ph-fill ph-flashlight"></i></div>
+    <div class="splash-title">FARO</div>
+    <div class="splash-sub">Sistema de Gestión Ferretera</div>
+    <div class="splash-bar"><div class="splash-bar__fill"></div></div>
+  </div>
+  <script>
+    setTimeout(() => { window.location.href = '/static/dashboard.html'; }, 1300);
+  </script>
+</body>
+</html>

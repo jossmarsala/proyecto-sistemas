@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FARO — Proyecciones</title>
+  <meta name="description" content="Módulo DSS de FARO: predicción de quiebre de stock, simulador What-If de escenarios de rentabilidad."/>
+  <link rel="stylesheet" href="/static/css/style.css"/>
+  <style>
+    .proj-header-tabs { display:flex; gap:8px; margin-bottom:24px; }
+    .proj-tab {
+      padding:8px 20px; border-radius:var(--radius-pill);
+      font-size:.85rem; font-weight:600; cursor:pointer;
+      border:1.5px solid var(--clr-beige); color:var(--clr-gray);
+      transition:all var(--t-fast); background:var(--clr-white);
+    }
+    .proj-tab.active { background:var(--clr-dark); color:#fff; border-color:var(--clr-dark); }
+    .proj-section { display:none; animation:fadeIn .3s ease; }
+    .proj-section.visible { display:block; }
+    .breakeven-badge {
+      display:inline-flex; align-items:center; gap:6px;
+      padding:4px 12px; border-radius:var(--radius-pill);
+      font-size:.75rem; font-weight:700;
+    }
+  </style>
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="sidebar__cutout">
+    <svg width="30" height="80" viewBox="0 0 30 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0,0 C0,25 30,15 30,40 C30,65 0,55 0,80 Z" fill="#F9F8F7" />
+      <path d="M0,0 C0,25 30,15 30,40 C30,65 0,55 0,80" stroke="#3b82f6" stroke-width="1.5" />
+    </svg>
+  </div>
+  <div class="sidebar__brand">
+    <span class="sidebar__name">FARO</span>
+    <span class="sidebar__sub">stock</span>
+  </div>
+  <nav class="sidebar__nav">
+    <a href="/static/dashboard.html" class="nav-item" data-page="dashboard">
+      <i class="ph ph-house nav-icon"></i> Inicio
+    </a>
+    <div class="nav-divider"></div>
+    <a href="/static/inventory.html" class="nav-item" data-page="inventory">
+      <i class="ph ph-wrench nav-icon"></i> Inventario
+    </a>
+    <div class="nav-divider"></div>
+    <a href="/static/sales.html" class="nav-item" data-page="sales">
+      <i class="ph ph-note-pencil nav-icon"></i> Ventas
+    </a>
+    <div class="nav-divider"></div>
+    <a href="/static/projections.html" class="nav-item" data-page="projections">
+      <i class="ph ph-eye nav-icon"></i> Proyecciones
+      <span class="nav-badge" id="alert-badge" style="display:none">0</span>
+    </a>
+  </nav>
+</aside>
+
+<main class="main-content">
+  <div class="page-header fade-in">
+    <div>
+      <h1 class="page-title">Proyecciones</h1>
+      <p class="page-subtitle">Módulo DSS · Predicción de quiebre · Simulador What-If</p>
+    </div>
+    <div class="flex gap-8">
+      <select class="form-select" id="proj-sucursal" style="min-width:160px">
+        <option value="1">Sucursal Principal</option>
+      </select>
+      <select class="form-select" id="proj-ventana" style="min-width:150px">
+        <option value="7">Ventana: 7 días</option>
+        <option value="30" selected>Ventana: 30 días</option>
+        <option value="60">Ventana: 60 días</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Tab navigation -->
+  <div class="proj-header-tabs">
+    <button class="proj-tab active" onclick="showTab('stockbreak', this)"><i class="ph ph-package"></i> Quiebre de Stock</button>
+    <button class="proj-tab" onclick="showTab('whatif', this)"><i class="ph-fill ph-lightning"></i> Simulador What-If</button>
+    <button class="proj-tab" onclick="showTab('trend', this)"><i class="ph ph-chart-bar"></i> Tendencia de Ventas</button>
+  </div>
+
+  <!-- ════════ TAB 1: Stock Break ════════════════════════════════════════════ -->
+  <div class="proj-section visible" id="tab-stockbreak">
+    <div class="flex justify-between items-center mb-16">
+      <div class="text-muted" style="font-size:.85rem">
+        Fórmula: <code>Días Restantes = Stock Actual ÷ Promedio Ventas Diarias</code>
+      </div>
+      <button class="btn btn-ghost btn-sm" onclick="loadStockBreak()"><i class="ph ph-arrows-clockwise"></i> Recalcular</button>
+    </div>
+
+    <!-- Summary KPIs -->
+    <div class="kpi-grid" id="sb-kpis" style="grid-template-columns:repeat(3,1fr);margin-bottom:20px">
+      <div class="kpi-card kpi-card--dark skeleton" style="height:90px"></div>
+      <div class="kpi-card kpi-card--pink skeleton" style="height:90px"></div>
+      <div class="kpi-card kpi-card--blue skeleton" style="height:90px"></div>
+    </div>
+
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>Producto</th>
+            <th style="text-align:right">Stock Actual</th>
+            <th style="text-align:right">Prom. Diario</th>
+            <th style="text-align:right">Días Restantes</th>
+            <th style="text-align:right">Reposición</th>
+            <th style="text-align:center">Estado</th>
+          </tr>
+        </thead>
+        <tbody id="sb-tbody">
+          <tr><td colspan="6" style="text-align:center;padding:40px"><div class="spinner"></div></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ════════ TAB 2: What-If ════════════════════════════════════════════════ -->
+  <div class="proj-section" id="tab-whatif">
+    <div class="whatif-layout">
+
+      <!-- Slider controls -->
+      <div class="card" style="display:flex;flex-direction:column;gap:20px">
+        <div>
+          <div class="fw-700 mb-8" style="font-size:.95rem"><i class="ph ph-gear"></i>️ Parámetros del escenario</div>
+          <div class="text-muted" style="font-size:.78rem">Los cambios se simulan en memoria. No se modifica la BD.</div>
+        </div>
+
+        <div class="slider-wrap">
+          <div class="slider-header">
+            <label class="slider-label"><i class="ph ph-trend-up"></i> Inflación estimada</label>
+            <span class="slider-value" id="inf-display">0%</span>
+          </div>
+          <input type="range" id="slider-inflacion" min="0" max="150" value="0"
+            oninput="document.getElementById('inf-display').textContent=this.value+'%'; scheduleSimulation()"/>
+        </div>
+
+        <div class="slider-wrap">
+          <div class="slider-header">
+            <label class="slider-label"><i class="ph ph-trend-down"></i><i class="ph ph-trend-up"></i> Variación de demanda</label>
+            <span class="slider-value" id="dem-display">0%</span>
+          </div>
+          <input type="range" id="slider-demanda" min="-50" max="50" value="0"
+            oninput="document.getElementById('dem-display').textContent=(this.value>0?'+':'')+this.value+'%'; scheduleSimulation()"/>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label"><i class="ph ph-money"></i> Costos fijos adicionales ($)</label>
+          <input class="form-input" id="input-costos" type="number" min="0" value="0" placeholder="0" oninput="scheduleSimulation()"/>
+        </div>
+
+        <button class="btn btn-accent" onclick="runSimulation()"><i class="ph-fill ph-lightning"></i> Probar escenario</button>
+      </div>
+
+      <!-- Results panel -->
+      <div>
+        <!-- Big result card -->
+        <div class="scenario-result mb-16" id="sim-result-card">
+          <div class="scenario-result__title">RENTABILIDAD SIMULADA</div>
+          <div class="scenario-result__value" id="sim-rent-val">—</div>
+          <div class="scenario-result__delta" id="sim-rent-delta">Ajustá los sliders para comenzar</div>
+          <div class="whatif-compare" id="sim-compare">
+            <div class="compare-box">
+              <div class="compare-box__label">Ingreso actual</div>
+              <div class="compare-box__value" id="sim-ing-act">—</div>
+            </div>
+            <div class="compare-box">
+              <div class="compare-box__label">Ingreso simulado</div>
+              <div class="compare-box__value" id="sim-ing-sim">—</div>
+            </div>
+            <div class="compare-box">
+              <div class="compare-box__label">Costo actual</div>
+              <div class="compare-box__value" id="sim-cos-act">—</div>
+            </div>
+            <div class="compare-box">
+              <div class="compare-box__label">Costo simulado</div>
+              <div class="compare-box__value" id="sim-cos-sim">—</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Product-level table -->
+        <div class="card" style="padding:0;overflow:hidden">
+          <div style="padding:16px 20px;font-weight:700;font-size:.88rem;border-bottom:1px solid rgba(0,0,0,.06)">
+            Impacto por Producto
+          </div>
+          <div style="overflow-x:auto">
+            <table>
+              <thead>
+                <tr>
+                  <th>Producto</th>
+                  <th style="text-align:right">Ingreso Actual</th>
+                  <th style="text-align:right">Ingreso Simulado</th>
+                  <th style="text-align:right">Δ Diferencia</th>
+                </tr>
+              </thead>
+              <tbody id="sim-products-tbody">
+                <tr class="no-data-row"><td colspan="4">Ejecutá una simulación para ver resultados</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════ TAB 3: Trend chart ════════════════════════════════════════════ -->
+  <div class="proj-section" id="tab-trend">
+    <div class="card fade-in" style="margin-bottom:20px">
+      <div class="flex justify-between items-center mb-16">
+        <div>
+          <div class="fw-700" style="font-size:.95rem">Ingresos diarios (histórico)</div>
+          <div class="text-muted" style="font-size:.78rem">Desde los últimos <span id="trend-days-label">30</span> días</div>
+        </div>
+        <div class="flex gap-8">
+          <select class="form-select" id="trend-period" onchange="loadTrendChart()" style="min-width:130px">
+            <option value="7">7 días</option>
+            <option value="30" selected>30 días</option>
+            <option value="90">90 días</option>
+            <option value="180">180 días</option>
+          </select>
+        </div>
+      </div>
+      <div class="chart-container" style="height:260px">
+        <canvas id="trend-chart"></canvas>
+      </div>
+    </div>
+
+    <div class="card fade-in" style="padding:0;overflow:hidden">
+      <div style="padding:16px 20px;font-weight:700;font-size:.88rem;border-bottom:1px solid rgba(0,0,0,.06)">
+        Resumen por período
+      </div>
+      <div style="overflow-x:auto">
+        <table>
+          <thead>
+            <tr><th>Día</th><th style="text-align:right">Nº Ventas</th><th style="text-align:right">Ingreso</th></tr>
+          </thead>
+          <tbody id="trend-tbody">
+            <tr class="no-data-row"><td colspan="3">Cargando…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<script src="/static/js/api.js"></script>
+<script src="/static/js/projections.js"></script>
+</body>
+</html>

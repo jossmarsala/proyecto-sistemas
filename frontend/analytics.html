@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FARO — Analytics & Predicciones</title>
+  <meta name="description" content="FARO Analytics: pronóstico de ventas con regresión, top productos, margen, y predicción de quiebre de stock con Machine Learning."/>
+  <link rel="stylesheet" href="/static/css/style.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  <style>
+    /* ── Analytics Page ── */
+
+    /* Stat cards row */
+    .anl-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .anl-stat {
+      background: var(--clr-white);
+      border-radius: var(--radius-lg);
+      border: 1px solid rgba(0,0,0,.05);
+      padding: 22px 24px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      transition: box-shadow var(--t-mid), transform var(--t-mid);
+      position: relative;
+      overflow: hidden;
+    }
+    .anl-stat:hover {
+      box-shadow: 0 8px 28px rgba(39,39,186,.10);
+      transform: translateY(-2px);
+    }
+    .anl-stat__icon {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius-md);
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+      font-size: 1.4rem;
+    }
+    .anl-stat__icon--dark  { background: rgba(29,37,40,.08);    color: var(--clr-dark); }
+    .anl-stat__icon--blue  { background: rgba(39,39,186,.10);   color: var(--clr-blue); }
+    .anl-stat__icon--light { background: rgba(123,127,212,.12); color: var(--clr-blue-light); }
+
+    .anl-stat__label {
+      font-size: .72rem;
+      font-weight: 600;
+      letter-spacing: .6px;
+      text-transform: uppercase;
+      color: var(--clr-gray);
+      margin-bottom: 4px;
+    }
+    .anl-stat__value {
+      font-size: 1.7rem;
+      font-weight: 800;
+      color: var(--clr-dark);
+      letter-spacing: -1px;
+      line-height: 1.1;
+    }
+    .anl-stat__sub {
+      font-size: .75rem;
+      color: var(--clr-gray);
+      margin-top: 3px;
+    }
+
+    /* Chart cards */
+    .chart-card {
+      background: var(--clr-white);
+      border-radius: var(--radius-lg);
+      border: 1px solid rgba(0,0,0,.05);
+      padding: 24px 26px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      transition: box-shadow var(--t-mid);
+    }
+    .chart-card:hover {
+      box-shadow: 0 6px 24px rgba(39,39,186,.08);
+    }
+    .chart-card__title {
+      font-size: .95rem;
+      font-weight: 700;
+      color: var(--clr-dark);
+    }
+    .chart-card__sub {
+      font-size: .75rem;
+      color: var(--clr-gray);
+      margin-top: 2px;
+      line-height: 1.4;
+    }
+
+    /* Pill badges */
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      border-radius: var(--radius-pill);
+      padding: 4px 12px;
+      font-size: .7rem;
+      font-weight: 700;
+      letter-spacing: .2px;
+    }
+    .pill--blue   { background: rgba(39,39,186,.08);  color: var(--clr-blue); border: 1px solid rgba(39,39,186,.14); }
+    .pill--green  { background: #dcfce7; color: #15803d; }
+    .pill--red    { background: #fee2e2; color: #b91c1c; }
+    .pill--yellow { background: #fef9c3; color: #a16207; }
+
+    /* Section heading */
+    .anl-section-head {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .anl-section-head__icon {
+      width: 34px;
+      height: 34px;
+      border-radius: var(--radius-sm);
+      background: rgba(39,39,186,.07);
+      color: var(--clr-blue);
+      display: grid;
+      place-items: center;
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+    .anl-section-head__title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--clr-dark);
+      letter-spacing: -.2px;
+    }
+    .anl-section-head__pills {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-left: auto;
+    }
+
+    /* Divider */
+    .anl-divider {
+      border: none;
+      height: 1px;
+      background: rgba(0,0,0,.06);
+      margin: 32px 0;
+    }
+
+    /* 2-col grid */
+    .anl-grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    /* Depletion cards */
+    .depletion-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .dep-card {
+      background: var(--clr-white);
+      border-radius: var(--radius-md);
+      border: 1px solid rgba(0,0,0,.05);
+      padding: 16px;
+      cursor: pointer;
+      transition: box-shadow var(--t-mid), transform var(--t-mid);
+      border-top: 3px solid transparent;
+    }
+    .dep-card:hover {
+      box-shadow: 0 6px 20px rgba(39,39,186,.10);
+      transform: translateY(-2px);
+    }
+    .dep-card.critical { border-top-color: var(--clr-danger); }
+    .dep-card.warn     { border-top-color: var(--clr-warning); }
+    .dep-card.ok       { border-top-color: var(--clr-success); }
+
+    .dep-card__name {
+      font-size: .75rem;
+      font-weight: 600;
+      color: var(--clr-gray);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-bottom: 8px;
+      letter-spacing: .2px;
+    }
+    .dep-card__days {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--clr-dark);
+      letter-spacing: -.6px;
+      line-height: 1;
+    }
+    .dep-card__label {
+      font-size: .64rem;
+      color: var(--clr-gray);
+      margin-top: 4px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+    }
+
+    /* Product mini stats */
+    .prod-stats-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 16px;
+    }
+    .prod-stat {
+      background: var(--clr-light);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      border: 1px solid rgba(0,0,0,.05);
+    }
+    .prod-stat__label {
+      font-size: .68rem;
+      font-weight: 600;
+      color: var(--clr-gray);
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      margin-bottom: 6px;
+    }
+    .prod-stat__value {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--clr-dark);
+      letter-spacing: -.4px;
+    }
+    .prod-stat__sub {
+      font-size: .72rem;
+      color: var(--clr-gray);
+      margin-top: 2px;
+    }
+    .prod-stat--blue  { background: rgba(39,39,186,.06);  border-color: rgba(39,39,186,.12); }
+    .prod-stat--green { background: rgba(34,197,94,.06);  border-color: rgba(34,197,94,.15); }
+    .prod-stat--red   { background: rgba(239,68,68,.06);  border-color: rgba(239,68,68,.15); }
+  </style>
+</head>
+<body>
+
+<!-- ═══ SIDEBAR ══════════════════════════════════════════════════════════════ -->
+<aside class="sidebar">
+  <div class="sidebar__cutout">
+    <svg width="30" height="80" viewBox="0 0 30 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0,0 C0,25 30,15 30,40 C30,65 0,55 0,80 Z" fill="#F9F8F7" />
+      <path d="M0,0 C0,25 30,15 30,40 C30,65 0,55 0,80" stroke="#3b82f6" stroke-width="1.5" />
+    </svg>
+  </div>
+  <div class="sidebar__brand">
+    <span class="sidebar__name">FARO</span>
+    <span class="sidebar__sub">stock</span>
+  </div>
+  <nav class="sidebar__nav">
+    <a href="/static/dashboard.html" class="nav-item" data-page="dashboard">
+      <i class="ph ph-house nav-icon"></i> Inicio
+    </a>
+    <div class="nav-divider"></div>
+    <a href="/static/inventory.html" class="nav-item" data-page="inventory">
+      <i class="ph ph-wrench nav-icon"></i> Inventario
+    </a>
+    <div class="nav-divider"></div>
+    <a href="/static/sales.html" class="nav-item" data-page="sales">
+      <i class="ph ph-note-pencil nav-icon"></i> Ventas
+    </a>
+    <div class="nav-divider"></div>
+    <a href="/static/projections.html" class="nav-item" data-page="projections">
+      <i class="ph ph-eye nav-icon"></i> Proyecciones
+      <span class="nav-badge" id="alert-badge" style="display:none">0</span>
+    </a>
+  </nav>
+</aside>
+
+<!-- ═══ MAIN ══════════════════════════════════════════════════════════════════ -->
+<main class="main-content">
+
+  <!-- ── Header ─────────────────────────────────────────────────────────── -->
+  <div class="page-header fade-in">
+    <div>
+      <h1 class="page-title">Analytics & Predicciones</h1>
+      <p class="page-subtitle">Machine Learning · Regresión polinómica · Pronóstico de ventas e inventario</p>
+    </div>
+    <div class="flex gap-8">
+      <select class="form-select" id="anl-sucursal" style="min-width:160px">
+        <option value="">Todas las sucursales</option>
+      </select>
+      <select class="form-select" id="anl-periodo" style="min-width:150px">
+        <option value="30">Historial: 30 días</option>
+        <option value="60" selected>Historial: 60 días</option>
+        <option value="90">Historial: 90 días</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- ══ SECTION 1: Forecast ════════════════════════════════════════════════ -->
+  <div class="anl-section-head fade-in">
+    <div class="anl-section-head__icon"><i class="ph ph-robot"></i></div>
+    <span class="anl-section-head__title">Pronóstico de Ventas</span>
+    <div class="anl-section-head__pills">
+      <span class="pill pill--blue" id="model-badge">Calculando…</span>
+      <span class="pill pill--green" id="r2-badge" style="display:none"></span>
+      <span class="pill pill--yellow" id="trend-badge">—</span>
+    </div>
+  </div>
+
+  <!-- KPI stat cards -->
+  <div class="anl-stats fade-in">
+    <div class="anl-stat" id="fc-avg">
+      <div class="anl-stat__icon anl-stat__icon--dark"><i class="ph ph-chart-line"></i></div>
+      <div>
+        <div class="anl-stat__label">Promedio diario</div>
+        <div class="anl-stat__value" id="fc-avg-val">—</div>
+        <div class="anl-stat__sub">Basado en historial</div>
+      </div>
+    </div>
+    <div class="anl-stat" id="fc-mes">
+      <div class="anl-stat__icon anl-stat__icon--blue"><i class="ph ph-trend-up"></i></div>
+      <div>
+        <div class="anl-stat__label">Proyección próximo mes</div>
+        <div class="anl-stat__value" id="fc-mes-val">—</div>
+        <div class="anl-stat__sub" id="fc-mes-sub">días proyectados</div>
+      </div>
+    </div>
+    <div class="anl-stat" id="fc-tend">
+      <div class="anl-stat__icon anl-stat__icon--light"><i class="ph ph-arrows-out-line-vertical"></i></div>
+      <div>
+        <div class="anl-stat__label">Tendencia del negocio</div>
+        <div class="anl-stat__value" id="fc-tend-val">—</div>
+        <div class="anl-stat__sub" id="fc-tend-sub">Análisis de regresión</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Forecast chart -->
+  <div class="chart-card fade-in" style="margin-bottom:32px">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start">
+      <div>
+        <div class="chart-card__title">Ventas Reales vs Pronóstico (IC 95%)</div>
+        <div class="chart-card__sub">Línea sólida = datos reales · Línea punteada = predicción · Área sombreada = intervalo de confianza</div>
+      </div>
+      <select class="form-select" id="fc-futuro" onchange="loadForecast()" style="min-width:140px;flex-shrink:0">
+        <option value="14">Proyectar 14 días</option>
+        <option value="30" selected>Proyectar 30 días</option>
+        <option value="60">Proyectar 60 días</option>
+      </select>
+    </div>
+    <div style="position:relative;height:280px">
+      <canvas id="chart-forecast"></canvas>
+    </div>
+  </div>
+
+  <hr class="anl-divider"/>
+
+  <!-- ══ SECTION 2: Top Products ════════════════════════════════════════════ -->
+  <div class="anl-section-head fade-in">
+    <div class="anl-section-head__icon"><i class="ph ph-package"></i></div>
+    <span class="anl-section-head__title">Análisis de Productos</span>
+  </div>
+
+  <div class="anl-grid-2 fade-in" style="margin-bottom:32px">
+    <div class="chart-card">
+      <div>
+        <div class="chart-card__title">Top 10 — Por Ingresos</div>
+        <div class="chart-card__sub">Total facturado en el período</div>
+      </div>
+      <div style="position:relative;height:230px">
+        <canvas id="chart-top-revenue"></canvas>
+      </div>
+    </div>
+    <div class="chart-card">
+      <div>
+        <div class="chart-card__title">Top 10 — Por Unidades Vendidas</div>
+        <div class="chart-card__sub">Cantidad total despachada</div>
+      </div>
+      <div style="position:relative;height:230px">
+        <canvas id="chart-top-qty"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <hr class="anl-divider"/>
+
+  <!-- ══ SECTION 3: Margin & Patterns ══════════════════════════════════════ -->
+  <div class="anl-section-head fade-in">
+    <div class="anl-section-head__icon"><i class="ph ph-money"></i></div>
+    <span class="anl-section-head__title">Margen e Ingreso vs Costo</span>
+  </div>
+
+  <div class="anl-grid-2 fade-in">
+    <div class="chart-card">
+      <div>
+        <div class="chart-card__title">Ingreso vs Costo diario</div>
+        <div class="chart-card__sub">Diferencia = margen bruto por día</div>
+      </div>
+      <div style="position:relative;height:210px">
+        <canvas id="chart-margin"></canvas>
+      </div>
+    </div>
+    <div class="chart-card">
+      <div>
+        <div class="chart-card__title">Ventas por día de la semana</div>
+        <div class="chart-card__sub">Distribución de ingresos</div>
+      </div>
+      <div style="position:relative;height:210px">
+        <canvas id="chart-dow"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <div class="chart-card fade-in" style="margin-top:16px;margin-bottom:32px">
+    <div>
+      <div class="chart-card__title">Distribución por hora del día</div>
+      <div class="chart-card__sub">¿A qué hora se vende más?</div>
+    </div>
+    <div style="position:relative;height:150px">
+      <canvas id="chart-hora"></canvas>
+    </div>
+  </div>
+
+  <hr class="anl-divider"/>
+
+  <!-- ══ SECTION 4: Stock Prediction ═══════════════════════════════════════ -->
+  <div class="anl-section-head fade-in">
+    <div class="anl-section-head__icon"><i class="ph ph-microscope"></i></div>
+    <span class="anl-section-head__title">Predicción de Stock por Producto</span>
+  </div>
+
+  <div class="depletion-grid fade-in" id="depletion-cards">
+    <div class="spinner" style="margin:20px auto;grid-column:1/-1"></div>
+  </div>
+
+  <!-- Individual product forecast -->
+  <div class="chart-card fade-in">
+    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+      <span style="font-weight:600;font-size:.88rem;color:var(--clr-gray)">Pronóstico de demanda:</span>
+      <select class="form-select" id="prod-select" onchange="loadProductForecast()" style="min-width:220px">
+        <option value="">Seleccioná un producto…</option>
+      </select>
+      <span class="pill pill--blue" id="prod-model-badge" style="display:none"></span>
+    </div>
+    <div style="position:relative;height:230px" id="prod-chart-wrap">
+      <canvas id="chart-product"></canvas>
+      <div id="prod-empty" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--clr-gray);font-size:.85rem">
+        Seleccioná un producto para ver su pronóstico individual
+      </div>
+    </div>
+    <div id="prod-stats" class="prod-stats-row" style="display:none">
+      <div class="prod-stat prod-stat--green">
+        <div class="prod-stat__label">Stock actual</div>
+        <div class="prod-stat__value" id="ps-stock">—</div>
+        <div class="prod-stat__sub">unidades</div>
+      </div>
+      <div class="prod-stat prod-stat--red">
+        <div class="prod-stat__label">Días hasta quiebre</div>
+        <div class="prod-stat__value" id="ps-dias">—</div>
+        <div class="prod-stat__sub">estimado por ML</div>
+      </div>
+      <div class="prod-stat prod-stat--blue">
+        <div class="prod-stat__label">Ingreso proyectado 30d</div>
+        <div class="prod-stat__value" id="ps-ingreso">—</div>
+        <div class="prod-stat__sub">precio × demanda</div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<script src="/static/js/api.js"></script>
+<script src="/static/js/analytics.js"></script>
+</body>
+</html>
