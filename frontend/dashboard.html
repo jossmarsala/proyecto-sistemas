@@ -62,80 +62,98 @@
     </div>
   </div>
 
-  <!-- KPI Grid -->
-  <div class="kpi-grid fade-in" id="kpi-grid">
-    <div class="kpi-card kpi-card--dark skeleton" style="height:120px"></div>
-    <div class="kpi-card kpi-card--blue skeleton" style="height:120px"></div>
-    <div class="kpi-card kpi-card--pink skeleton" style="height:120px"></div>
-    <div class="kpi-card kpi-card--accent skeleton" style="height:120px"></div>
-  </div>
+  <!-- Bento Layout -->
+  <div class="bento-layout fade-in">
+    <!-- LEFT COLUMN -->
+    <div class="bento-left">
+      <!-- ROW 1 -->
+      <div class="bento-row bento-row-3">
+        <!-- Ingresos del mes -->
+        <div class="bento-card bento-card--white bento-glow-yellow bento-flex-col">
+          <div class="bento-card-title">Ingresos del mes</div>
+          <div class="bento-sparkline-container">
+            <canvas id="revenue-sparkline"></canvas>
+          </div>
+          <div style="display:flex; align-items: flex-end; gap: 8px; margin-top: auto;">
+            <div class="bento-card-value" id="kpi-ingresos-mes" style="margin-top: 0;">$0</div>
+            <div id="kpi-ingresos-hoy" style="font-size: 0.85rem; color: var(--clr-gray); font-weight: 500; margin-bottom: 4px;"></div>
+          </div>
+        </div>
+        
+        <!-- Ventas totales -->
+        <div class="bento-card bento-card--white bento-glow-yellow bento-flex-col">
+          <div class="bento-card-title">Ventas totales</div>
+          <div style="display:flex; align-items: flex-end; gap: 8px; margin-top: auto;">
+            <div class="bento-card-value-large" id="kpi-ventas-totales" style="margin-top: 0;">0</div>
+            <div style="font-size: 0.85rem; color: var(--clr-gray); font-weight: 500; margin-bottom: 6px;">históricas</div>
+          </div>
+        </div>
 
-  <!-- Charts + Alerts row -->
-  <div class="two-col" style="margin-bottom:24px">
-
-    <!-- Revenue chart -->
-    <div class="card fade-in">
-      <div class="flex justify-between items-center mb-16">
-        <div>
-          <div class="fw-700" style="font-size:.95rem">Ingresos diarios</div>
-          <div class="text-muted" style="font-size:.78rem">Tendencia de los últimos días</div>
+        <!-- Nueva Venta -->
+        <div class="bento-card bento-card--dark bento-card-center" onclick="window.location.href='/static/sales.html'" style="cursor:pointer">
+          <div class="bento-icon-large">+</div>
+          <div class="bento-card-label-small">NUEVA VENTA</div>
         </div>
       </div>
-      <div class="chart-container" style="height:180px">
-        <canvas id="revenue-chart"></canvas>
-      </div>
-    </div>
 
-    <!-- Alerts panel -->
-    <div class="card fade-in" style="display:flex;flex-direction:column">
-      <div class="flex justify-between items-center mb-16">
-        <div>
-          <div class="fw-700" style="font-size:.95rem">Alertas activas</div>
-          <div class="text-muted" style="font-size:.78rem">Stock mínimo · Crédito</div>
+      <!-- ROW 2: Alertas activas -->
+      <div class="bento-card bento-card--dark" style="overflow: visible;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+          <div class="bento-card-title bento-card-title-white" id="alert-title-count" style="margin-bottom: 0;">Alertas activas (0)</div>
+          <div class="alert-nav-arrows" id="alert-nav-arrows" style="display: none; gap: 8px;">
+            <button class="alert-nav-btn" onclick="prevAlert(event)" style="background: transparent; color: white; border: none; cursor: pointer; opacity: 0.7; padding: 4px; display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 50%; transition: background var(--t-fast), opacity var(--t-fast);" onmouseover="this.style.background='rgba(255,255,255,0.1)'; this.style.opacity='1'" onmouseout="this.style.background='transparent'; this.style.opacity='0.7'"><i class="ph ph-caret-left" style="font-size: 1.1rem;"></i></button>
+            <button class="alert-nav-btn" onclick="nextAlert(event)" style="background: transparent; color: white; border: none; cursor: pointer; opacity: 0.7; padding: 4px; display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 50%; transition: background var(--t-fast), opacity var(--t-fast);" onmouseover="this.style.background='rgba(255,255,255,0.1)'; this.style.opacity='1'" onmouseout="this.style.background='transparent'; this.style.opacity='0.7'"><i class="ph ph-caret-right" style="font-size: 1.1rem;"></i></button>
+          </div>
         </div>
-        <button class="btn btn-ghost btn-sm" onclick="loadAlerts()"><i class="ph ph-arrows-clockwise"></i> Actualizar</button>
+        <div class="alerts-stack-container" id="alerts-container">
+          <div class="spinner" style="margin:20px auto; border-color: rgba(255,255,255,0.1); border-top-color: #fff;"></div>
+        </div>
       </div>
-      <div id="alerts-container" style="flex:1;overflow-y:auto;max-height:220px">
-        <div class="spinner" style="margin-top:40px"></div>
-      </div>
-    </div>
-  </div>
 
-  <!-- Bottom row: Top products + Recent sales -->
-  <div class="two-col">
-
-    <!-- Top products bar chart -->
-    <div class="card fade-in">
-      <div class="fw-700 mb-16" style="font-size:.95rem">Top Productos Vendidos</div>
-      <div class="chart-container" style="height:180px">
-        <canvas id="top-products-chart"></canvas>
+      <!-- ROW 3: Ventas recientes -->
+      <div class="bento-card bento-card--white bento-glow-blue-bottom" style="flex: 1;">
+        <div class="bento-card-title" style="margin-bottom: 20px;">Ventas recientes</div>
+        <div class="bento-pill-list bento-pill-list--light" id="recent-sales-list">
+          <div class="spinner" style="margin:20px auto"></div>
+        </div>
       </div>
     </div>
 
-    <!-- Recent sales table -->
-    <div class="card fade-in" style="padding:0;overflow:hidden">
-      <div class="flex justify-between items-center" style="padding:18px 22px 14px">
-        <div class="fw-700" style="font-size:.95rem">Ventas recientes</div>
-        <a href="/static/sales.html" class="btn btn-ghost btn-sm">Ver todas <i class="ph ph-arrow-right"></i></a>
+    <!-- RIGHT COLUMN -->
+    <div class="bento-right">
+      <!-- Ajuste Global Precios -->
+      <div class="bento-card bento-card--white bento-glow-blue-right">
+        <div style="margin-bottom: 20px;">
+          <div class="bento-card-title" style="margin-bottom: 4px;">Ajustar precios</div>
+          <div style="font-size: 0.8rem; color: var(--clr-gray); line-height: 1.35;">Incrementa el precio de todos los productos en un clic.</div>
+        </div>
+        <div class="bento-slider-container" style="margin-top: auto;">
+          <input type="range" min="0" max="100" value="20" class="bento-slider" id="global-price-slider">
+          <div class="bento-slider-value" id="global-price-value">20%</div>
+        </div>
+        <button class="btn btn-blue" id="btn-aplicar-ajuste" style="margin-top: 20px; width: 100%; border: none; font-weight: 600; box-shadow: 0 4px 12px rgba(39, 39, 186, 0.15);" onclick="aplicarAjusteGlobal()">Aplicar Ajuste</button>
       </div>
-      <div style="overflow-x:auto">
-        <table>
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Fecha</th>
-              <th>Cliente</th>
-              <th>Pago</th>
-              <th style="text-align:right">Total</th>
-            </tr>
-          </thead>
-          <tbody id="recent-sales-body">
-            <tr><td colspan="5" style="text-align:center;padding:30px">
-              <div class="spinner"></div>
-            </td></tr>
-          </tbody>
-        </table>
+
+      <!-- Ingresos esta semana -->
+      <div class="bento-card bento-card--white bento-glow-yellow bento-card-tall">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+          <div class="bento-card-title" style="margin-bottom: 0;">Ingresos esta semana</div>
+          <div style="display: flex; align-items: center; gap: 6px; font-size: 0.8rem; color: var(--clr-gray); font-weight: 500;">
+            <span style="width: 8px; height: 8px; border-radius: 50%; background: var(--clr-dark); display: inline-block;"></span>
+            Ventas
+          </div>
+        </div>
+        <div class="bento-chart-container-tall">
+          <canvas id="weekly-revenue-chart"></canvas>
+        </div>
       </div>
+
+      <!-- VER CATALOGO -->
+      <button class="btn btn-catalog fade-in" onclick="window.location.href='/static/inventory.html'">
+        <i class="ph ph-book-open" style="font-size: 1.3rem;"></i>
+        VER CATÁLOGO
+        <i class="ph ph-arrow-right" style="font-size: 1.1rem;"></i>
+      </button>
     </div>
   </div>
 

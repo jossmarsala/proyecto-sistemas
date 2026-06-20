@@ -54,15 +54,14 @@
   </div>
 
   <!-- Quick stats bar -->
-  <div class="kpi-grid" id="inv-kpis" style="grid-template-columns:repeat(4,1fr);margin-bottom:20px">
-    <div class="kpi-card kpi-card--dark skeleton" style="height:90px"></div>
-    <div class="kpi-card kpi-card--blue skeleton" style="height:90px"></div>
-    <div class="kpi-card kpi-card--pink skeleton" style="height:90px"></div>
-    <div class="kpi-card kpi-card--accent skeleton" style="height:90px"></div>
+  <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 28px; margin-bottom: 28px;" id="inv-kpis">
+    <div class="bento-card bento-card--dark skeleton" style="height:120px"></div>
+    <div class="bento-card bento-card--white skeleton" style="height:120px"></div>
+    <div class="bento-card bento-card--white skeleton" style="height:120px"></div>
+    <div class="bento-card bento-card--white skeleton" style="height:120px"></div>
   </div>
-
   <!-- Filters -->
-  <div class="card fade-in" style="padding:16px 22px;margin-bottom:16px">
+  <div class="bento-card bento-card--white bento-glow-blue-right fade-in" style="padding:16px 26px; margin-bottom:28px; overflow:visible;">
     <div class="flex gap-12 items-center flex-wrap">
       <div class="search-bar" style="position:relative;flex:1;min-width:200px">
         <span class="search-icon"><i class="ph ph-magnifying-glass"></i></span>
@@ -78,8 +77,9 @@
   </div>
 
   <!-- Product table -->
-  <div class="table-wrapper fade-in">
-    <table id="product-table">
+  <div class="bento-card bento-card--white bento-glow-yellow fade-in" style="padding:0; overflow:hidden;">
+    <div class="table-wrapper" style="border:none; box-shadow:none; border-radius:0;">
+      <table id="product-table">
       <thead>
         <tr>
           <th>SKU</th>
@@ -95,7 +95,8 @@
       <tbody id="product-tbody">
         <tr><td colspan="8" style="text-align:center;padding:40px"><div class="spinner"></div></td></tr>
       </tbody>
-    </table>
+      </table>
+    </div>
   </div>
 </main>
 

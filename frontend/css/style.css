@@ -191,26 +191,29 @@ img {
   display: flex;
   align-items: center;
   gap: 16px;
-  padding: 16px 10px;
-  border-radius: 0;
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
   color: #fff;
   font-size: 1rem;
-  font-weight: 300;
-  transition: opacity var(--t-fast);
+  font-weight: 400;
+  transition: opacity var(--t-fast), background-color var(--t-fast), transform var(--t-fast);
   position: relative;
   cursor: pointer;
   opacity: 0.85;
+  margin: 2px 8px;
 }
 
 .nav-item:hover {
   opacity: 1;
-  background: transparent;
+  background: rgba(255, 255, 255, 0.08);
+  transform: translateX(4px);
 }
 
 .nav-item.active {
-  background: transparent;
+  background: rgba(255, 255, 255, 0.12);
   color: #fff;
   opacity: 1;
+  font-weight: 500;
 }
 
 .nav-icon {
@@ -268,10 +271,11 @@ img {
 }
 
 .page-title {
-  font-size: 1.75rem;
+  font-size: 1.85rem;
   font-weight: 800;
   color: var(--clr-dark);
-  letter-spacing: -.4px;
+  letter-spacing: -.5px;
+  line-height: 1.2;
 }
 
 .page-subtitle {
@@ -293,7 +297,7 @@ img {
   border-radius: 9999px;
   font-size: 1rem;
   font-weight: 600;
-  transition: transform var(--t-fast), box-shadow var(--t-fast), opacity var(--t-fast), border-color var(--t-fast);
+  transition: transform var(--t-fast), box-shadow var(--t-fast), opacity var(--t-fast), border-color var(--t-fast), background-color var(--t-fast);
   cursor: pointer;
   border: none;
 }
@@ -373,27 +377,60 @@ img {
   height: auto;
 }
 
+.btn-catalog {
+  height: 72px;
+  border-radius: 24px;
+  width: 100%;
+  font-size: 1.05rem;
+  letter-spacing: 1.5px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: var(--clr-blue);
+  color: var(--clr-white);
+  box-shadow: 0 8px 24px rgba(39, 39, 186, 0.2);
+  transition: transform var(--t-fast), box-shadow var(--t-fast), background var(--t-fast);
+}
+
+.btn-catalog:hover {
+  background: var(--clr-blue-light);
+  box-shadow: 0 12px 32px rgba(39, 39, 186, 0.35);
+  transform: translateY(-2px);
+}
+
+.btn-catalog:hover .ph-arrow-right {
+  transform: translateX(6px);
+}
+
+.btn-catalog .ph-arrow-right {
+  transition: transform var(--t-fast);
+}
+
 /* ══════════════════════════════════════════════════════════════════════
    CARDS
    ══════════════════════════════════════════════════════════════════════ */
 .card {
   background: var(--clr-white);
   border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-sm);
-  padding: 22px 24px;
-  border: 1px solid rgba(0, 0, 0, .05);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, .03);
+  padding: 24px 26px;
+  border: 1px solid rgba(0, 0, 0, .04);
   transition: box-shadow var(--t-mid), transform var(--t-mid);
 }
 
 .card:hover {
-  box-shadow: 0 8px 28px rgba(39, 39, 186, .08);
+  box-shadow: 0 10px 32px rgba(39, 39, 186, .08);
+  transform: translateY(-2px);
 }
 
 /* KPI card variants */
 .kpi-card {
   background: var(--clr-white);
   border-radius: var(--radius-lg);
-  border: 1px solid rgba(0, 0, 0, .05);
+  border: 1px solid rgba(0, 0, 0, .04);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, .03);
   padding: 24px 26px;
   display: flex;
   flex-direction: column;
@@ -404,8 +441,8 @@ img {
 }
 
 .kpi-card:hover {
-  box-shadow: 0 8px 28px rgba(39, 39, 186, .10);
-  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(39, 39, 186, .08);
+  transform: translateY(-3px);
 }
 
 .kpi-card--dark {
@@ -525,13 +562,14 @@ thead {
 }
 
 thead th {
-  padding: 13px 16px;
+  padding: 14px 18px;
   text-align: left;
   font-size: .75rem;
   font-weight: 600;
-  letter-spacing: .8px;
+  letter-spacing: 1px;
   text-transform: uppercase;
   white-space: nowrap;
+  color: rgba(255, 255, 255, 0.9);
 }
 
 thead th:first-child {
@@ -619,14 +657,15 @@ td.muted {
 }
 
 .form-input {
-  padding: 10px 14px;
+  padding: 12px 16px;
   border: 1.5px solid var(--clr-beige);
   border-radius: var(--radius-md);
-  font-size: .9rem;
+  font-size: .95rem;
   color: var(--clr-dark);
   background: var(--clr-white);
   transition: border-color var(--t-fast), box-shadow var(--t-fast);
   outline: none;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.02);
 }
 
 .form-input:focus {
@@ -1524,4 +1563,561 @@ input[type="range"]::-webkit-slider-thumb:hover {
 .highlight-negative {
   color: var(--clr-danger);
   font-weight: 700;
+}
+
+/* =====================================================================
+   BENTO DASHBOARD REDESIGN
+   ===================================================================== */
+.bento-layout {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 28px;
+  align-items: start;
+  margin-top: 10px;
+}
+
+.bento-left {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  min-width: 0; /* Prevent canvas from breaking grid */
+}
+
+.bento-right {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  min-width: 0;
+}
+
+.bento-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 0.6fr;
+  gap: 28px;
+  min-width: 0;
+}
+
+.bento-card {
+  --edge-proximity: 0;
+  --cursor-angle: 45deg;
+  --edge-sensitivity: 30;
+  --color-sensitivity: calc(var(--edge-sensitivity) + 20);
+  --border-radius: 36px;
+  --glow-padding: 40px;
+  --cone-spread: 25;
+  --fill-opacity: 0.35;
+
+  /* Default glow colors */
+  --glow-color: hsl(200deg 80% 80% / 100%);
+  --glow-color-60: hsl(200deg 80% 80% / 60%);
+  --glow-color-50: hsl(200deg 80% 80% / 50%);
+  --glow-color-40: hsl(200deg 80% 80% / 40%);
+  --glow-color-30: hsl(200deg 80% 80% / 30%);
+  --glow-color-20: hsl(200deg 80% 80% / 20%);
+  --glow-color-10: hsl(200deg 80% 80% / 10%);
+
+  /* Default gradients */
+  --gradient-one: radial-gradient(at 80% 55%, #c084fc 0px, transparent 50%);
+  --gradient-two: radial-gradient(at 69% 34%, #f472b6 0px, transparent 50%);
+  --gradient-three: radial-gradient(at 8% 6%, #38bdf8 0px, transparent 50%);
+  --gradient-four: radial-gradient(at 41% 38%, #c084fc 0px, transparent 50%);
+  --gradient-five: radial-gradient(at 86% 85%, #f472b6 0px, transparent 50%);
+  --gradient-six: radial-gradient(at 82% 18%, #38bdf8 0px, transparent 50%);
+  --gradient-seven: radial-gradient(at 51% 4%, #f472b6 0px, transparent 50%);
+  --gradient-base: linear-gradient(#c084fc 0 100%);
+
+  border-radius: var(--border-radius);
+  padding: 26px 30px;
+  position: relative;
+  isolation: isolate;
+  transform: translate3d(0, 0, 0.01px);
+  display: flex;
+  flex-direction: column;
+  box-shadow:
+    rgba(0, 0, 0, 0.05) 0px 1px 2px,
+    rgba(0, 0, 0, 0.05) 0px 2px 4px,
+    rgba(0, 0, 0, 0.03) 0px 10px 40px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: var(--card-bg, rgba(255, 255, 255, 0.7));
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  min-width: 0;
+  overflow: visible;
+  transition: transform var(--t-mid), box-shadow var(--t-mid);
+}
+
+.bento-card:hover {
+  transform: translateY(-4px);
+  box-shadow:
+    rgba(0, 0, 0, 0.08) 0px 4px 8px,
+    rgba(0, 0, 0, 0.08) 0px 8px 16px,
+    rgba(0, 0, 0, 0.05) 0px 16px 45px;
+}
+
+.bento-card::before,
+.bento-card::after,
+.bento-card > .edge-light {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  transition: opacity 0.25s ease-out;
+  z-index: -1;
+}
+
+.bento-card:not(:hover):not(.sweep-active)::before,
+.bento-card:not(:hover):not(.sweep-active)::after,
+.bento-card:not(:hover):not(.sweep-active) > .edge-light {
+  opacity: 0;
+  transition: opacity 0.75s ease-in-out;
+}
+
+/* colored mesh-gradient border */
+.bento-card::before {
+  border: 1px solid transparent;
+  background:
+    linear-gradient(var(--card-bg, rgba(255, 255, 255, 0.7)) 0 100%) padding-box,
+    linear-gradient(rgba(255, 255, 255, 0) 0% 100%) border-box,
+    var(--gradient-one) border-box,
+    var(--gradient-two) border-box,
+    var(--gradient-three) border-box,
+    var(--gradient-four) border-box,
+    var(--gradient-five) border-box,
+    var(--gradient-six) border-box,
+    var(--gradient-seven) border-box,
+    var(--gradient-base) border-box;
+
+  opacity: calc(0.5 * (var(--edge-proximity) - var(--color-sensitivity)) / (100 - var(--color-sensitivity)));
+
+  mask-image:
+    conic-gradient(
+      from var(--cursor-angle) at center,
+      black calc(var(--cone-spread) * 1%),
+      transparent calc((var(--cone-spread) + 15) * 1%),
+      transparent calc((100 - var(--cone-spread) - 15) * 1%),
+      black calc((100 - var(--cone-spread)) * 1%)
+    );
+  -webkit-mask-image:
+    conic-gradient(
+      from var(--cursor-angle) at center,
+      black calc(var(--cone-spread) * 1%),
+      transparent calc((var(--cone-spread) + 15) * 1%),
+      transparent calc((100 - var(--cone-spread) - 15) * 1%),
+      black calc((100 - var(--cone-spread)) * 1%)
+    );
+}
+
+/* colored mesh-gradient background fill near edges */
+.bento-card::after {
+  border: 1px solid transparent;
+  background:
+    var(--gradient-one) padding-box,
+    var(--gradient-two) padding-box,
+    var(--gradient-three) padding-box,
+    var(--gradient-four) padding-box,
+    var(--gradient-five) padding-box,
+    var(--gradient-six) padding-box,
+    var(--gradient-seven) padding-box,
+    var(--gradient-base) padding-box;
+
+  mask-image:
+    linear-gradient(to bottom, black, black),
+    radial-gradient(ellipse at 50% 50%, black 40%, transparent 65%),
+    radial-gradient(ellipse at 66% 66%, black 5%, transparent 40%),
+    radial-gradient(ellipse at 33% 33%, black 5%, transparent 40%),
+    radial-gradient(ellipse at 66% 33%, black 5%, transparent 40%),
+    radial-gradient(ellipse at 33% 66%, black 5%, transparent 40%),
+    conic-gradient(from var(--cursor-angle) at center, transparent 5%, black 15%, black 85%, transparent 95%);
+  -webkit-mask-image:
+    linear-gradient(to bottom, black, black),
+    radial-gradient(ellipse at 50% 50%, black 40%, transparent 65%),
+    radial-gradient(ellipse at 66% 66%, black 5%, transparent 40%),
+    radial-gradient(ellipse at 33% 33%, black 5%, transparent 40%),
+    radial-gradient(ellipse at 66% 33%, black 5%, transparent 40%),
+    radial-gradient(ellipse at 33% 66%, black 5%, transparent 40%),
+    conic-gradient(from var(--cursor-angle) at center, transparent 5%, black 15%, black 85%, transparent 95%);
+
+  mask-composite: subtract, add, add, add, add, add;
+  -webkit-mask-composite: source-out, destination-over, destination-over, destination-over, destination-over, destination-over;
+  opacity: calc(var(--fill-opacity, 0.15) * (var(--edge-proximity) - var(--color-sensitivity)) / (100 - var(--color-sensitivity)));
+  mix-blend-mode: soft-light;
+}
+
+/* outer glow layer */
+.bento-card > .edge-light {
+  inset: calc(var(--glow-padding) * -1);
+  pointer-events: none;
+  z-index: 1;
+
+  mask-image:
+    conic-gradient(
+      from var(--cursor-angle) at center, black 2.5%, transparent 10%, transparent 90%, black 97.5%
+    );
+  -webkit-mask-image:
+    conic-gradient(
+      from var(--cursor-angle) at center, black 2.5%, transparent 10%, transparent 90%, black 97.5%
+    );
+  mix-blend-mode: plus-lighter;
+  opacity: calc(0.5 * (var(--edge-proximity) - var(--edge-sensitivity)) / (100 - var(--edge-sensitivity)));
+}
+
+.bento-card > .edge-light::before {
+  content: "";
+  position: absolute;
+  inset: var(--glow-padding);
+  border-radius: inherit;
+  box-shadow:
+    inset 0 0 0 1px var(--glow-color, hsl(40deg 80% 80% / 100%)),
+    inset 0 0 1px 0 var(--glow-color-60, hsl(40deg 80% 80% / 60%)),
+    inset 0 0 3px 0 var(--glow-color-50, hsl(40deg 80% 80% / 50%)),
+    inset 0 0 6px 0 var(--glow-color-40, hsl(40deg 80% 80% / 40%)),
+    inset 0 0 15px 0 var(--glow-color-30, hsl(40deg 80% 80% / 30%)),
+    inset 0 0 25px 2px var(--glow-color-20, hsl(40deg 80% 80% / 20%)),
+    inset 0 0 50px 2px var(--glow-color-10, hsl(40deg 80% 80% / 10%)),
+    0 0 1px 0 var(--glow-color-60, hsl(40deg 80% 80% / 60%)),
+    0 0 3px 0 var(--glow-color-50, hsl(40deg 80% 80% / 50%)),
+    0 0 6px 0 var(--glow-color-40, hsl(40deg 80% 80% / 40%)),
+    0 0 15px 0 var(--glow-color-30, hsl(40deg 80% 80% / 30%)),
+    0 0 25px 2px var(--glow-color-20, hsl(40deg 80% 80% / 20%)),
+    0 0 50px 2px var(--glow-color-10, hsl(40deg 80% 80% / 10%));
+}
+
+.border-glow-inner {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+}
+
+.bento-card-center .border-glow-inner {
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.bento-card.bento-flex-col .border-glow-inner {
+  flex: 1;
+}
+
+.bento-card--dark {
+  --card-bg: linear-gradient(145deg, #182025 0%, #2A333A 100%);
+  color: var(--clr-white);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+
+  --glow-color: hsl(220deg 50% 55% / 100%);
+  --glow-color-60: hsl(220deg 50% 55% / 60%);
+  --glow-color-50: hsl(220deg 50% 55% / 50%);
+  --glow-color-40: hsl(220deg 50% 55% / 40%);
+  --glow-color-30: hsl(220deg 50% 55% / 30%);
+  --glow-color-20: hsl(220deg 50% 55% / 20%);
+  --glow-color-10: hsl(220deg 50% 55% / 10%);
+
+  --gradient-one: radial-gradient(at 80% 55%, #182025 0px, transparent 50%);
+  --gradient-two: radial-gradient(at 69% 34%, #2A333A 0px, transparent 50%);
+  --gradient-three: radial-gradient(at 8% 6%, #3B3BFF 0px, transparent 50%);
+  --gradient-four: radial-gradient(at 41% 38%, #182025 0px, transparent 50%);
+  --gradient-five: radial-gradient(at 86% 85%, #2A333A 0px, transparent 50%);
+  --gradient-six: radial-gradient(at 82% 18%, #3B3BFF 0px, transparent 50%);
+  --gradient-seven: radial-gradient(at 51% 4%, #2A333A 0px, transparent 50%);
+  --gradient-base: linear-gradient(#182025 0 100%);
+}
+
+/* Gradients */
+.bento-glow-yellow {
+  --card-bg: linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(245, 250, 30, 0.08) 100%);
+  --glow-color: hsl(55deg 95% 65% / 100%);
+  --glow-color-60: hsl(55deg 95% 65% / 60%);
+  --glow-color-50: hsl(55deg 95% 65% / 50%);
+  --glow-color-40: hsl(55deg 95% 65% / 40%);
+  --glow-color-30: hsl(55deg 95% 65% / 30%);
+  --glow-color-20: hsl(55deg 95% 65% / 20%);
+  --glow-color-10: hsl(55deg 95% 65% / 10%);
+
+  --gradient-one: radial-gradient(at 80% 55%, #F5FA1E 0px, transparent 50%);
+  --gradient-two: radial-gradient(at 69% 34%, #E8A898 0px, transparent 50%);
+  --gradient-three: radial-gradient(at 8% 6%, #7B7FD4 0px, transparent 50%);
+  --gradient-four: radial-gradient(at 41% 38%, #F5FA1E 0px, transparent 50%);
+  --gradient-five: radial-gradient(at 86% 85%, #E8A898 0px, transparent 50%);
+  --gradient-six: radial-gradient(at 82% 18%, #7B7FD4 0px, transparent 50%);
+  --gradient-seven: radial-gradient(at 51% 4%, #E8A898 0px, transparent 50%);
+  --gradient-base: linear-gradient(#F5FA1E 0 100%);
+}
+
+.bento-glow-blue-bottom,
+.bento-glow-blue-right {
+  --card-bg: linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(59, 59, 255, 0.06) 100%);
+  --glow-color: hsl(240deg 75% 65% / 100%);
+  --glow-color-60: hsl(240deg 75% 65% / 60%);
+  --glow-color-50: hsl(240deg 75% 65% / 50%);
+  --glow-color-40: hsl(240deg 75% 65% / 40%);
+  --glow-color-30: hsl(240deg 75% 65% / 30%);
+  --glow-color-20: hsl(240deg 75% 65% / 20%);
+  --glow-color-10: hsl(240deg 75% 65% / 10%);
+
+  --gradient-one: radial-gradient(at 80% 55%, #3B3BFF 0px, transparent 50%);
+  --gradient-two: radial-gradient(at 69% 34%, #7B7FD4 0px, transparent 50%);
+  --gradient-three: radial-gradient(at 8% 6%, #c084fc 0px, transparent 50%);
+  --gradient-four: radial-gradient(at 41% 38%, #3B3BFF 0px, transparent 50%);
+  --gradient-five: radial-gradient(at 86% 85%, #7B7FD4 0px, transparent 50%);
+  --gradient-six: radial-gradient(at 82% 18%, #c084fc 0px, transparent 50%);
+  --gradient-seven: radial-gradient(at 51% 4%, #7B7FD4 0px, transparent 50%);
+  --gradient-base: linear-gradient(#3B3BFF 0 100%);
+}
+
+/* Typography */
+.bento-card-title {
+  font-size: 1.05rem;
+  font-weight: 500;
+  color: var(--clr-dark);
+  z-index: 2;
+  margin-bottom: 8px;
+}
+
+.bento-card-title-white {
+  color: var(--clr-white);
+  font-size: 1.05rem;
+}
+
+.bento-card-title-upper {
+  font-size: 0.95rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--clr-dark);
+  letter-spacing: 0.5px;
+  margin-bottom: 32px;
+}
+
+.bento-card-value {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--clr-dark);
+  z-index: 2;
+  margin-top: auto;
+  line-height: 1;
+}
+
+.bento-card-value-large {
+  font-size: 2.6rem;
+  font-weight: 800;
+  color: var(--clr-dark);
+  z-index: 2;
+  margin-top: auto;
+  line-height: 1;
+  letter-spacing: -1px;
+}
+
+.bento-flex-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.bento-card-center {
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.bento-card-tall {
+  height: 100%;
+  min-height: 300px;
+}
+
+.bento-card-small {
+  min-height: 120px;
+}
+
+.bento-icon-large {
+  font-size: 3.5rem;
+  font-weight: 300;
+  line-height: 1;
+  margin-bottom: 12px;
+}
+
+.bento-card-label-small {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--clr-white);
+}
+
+.bento-card-label-upper {
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--clr-white);
+  letter-spacing: 0.5px;
+}
+
+/* Pill Lists */
+.bento-pill-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  z-index: 2;
+}
+
+.alerts-stack-container {
+  position: relative;
+  height: 72px;
+  margin-top: 6px;
+}
+
+.alert-stack-card {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 24px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: var(--clr-white);
+  font-size: 0.95rem;
+  background: #252D32;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: transform var(--t-mid), opacity var(--t-mid), z-index var(--t-mid), border-color var(--t-mid);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.alert-stack-card:hover {
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.alert-stack-card.active {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0) scale(1);
+  z-index: 3;
+}
+
+.alert-stack-card.stacked-1 {
+  opacity: 0.7;
+  transform: translateY(8px) scale(0.96);
+  z-index: 2;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+.alert-stack-card.stacked-2 {
+  opacity: 0.4;
+  transform: translateY(16px) scale(0.92);
+  z-index: 1;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+}
+
+.alert-stack-card.hidden {
+  opacity: 0;
+  transform: translateY(24px) scale(0.88);
+  z-index: 0;
+}
+
+.bento-pill-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 24px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  color: var(--clr-white);
+  font-size: 0.95rem;
+  background: transparent;
+  transition: transform var(--t-fast), background var(--t-fast);
+}
+
+.bento-pill-item:hover {
+  transform: translateX(4px);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.bento-pill-list--light .bento-pill-item {
+  border: 1px solid var(--clr-dark);
+  color: var(--clr-dark);
+}
+
+.bento-pill-icon {
+  font-weight: 500;
+  margin-right: 8px;
+}
+
+.bento-pill-text {
+  flex: 1;
+}
+
+.bento-pill-row {
+  display: grid;
+  grid-template-columns: 0.6fr 1.6fr 1.2fr 1fr 1fr;
+  width: 100%;
+  align-items: center;
+  font-size: 0.95rem;
+  color: var(--clr-dark);
+}
+
+.bento-pill-row span:last-child {
+  text-align: right;
+}
+
+/* Sparkline & Charts */
+.bento-sparkline-container {
+  height: 50px;
+  margin: 6px 0;
+  position: relative;
+  z-index: 2;
+  width: 100%;
+}
+
+.bento-chart-container-tall {
+  flex: 1;
+  position: relative;
+  z-index: 2;
+  min-height: 180px;
+  width: 100%;
+}
+
+/* Slider */
+.bento-slider-container {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  z-index: 2;
+}
+
+.bento-slider {
+  flex: 1;
+  -webkit-appearance: none;
+  height: 6px;
+  background: var(--clr-beige);
+  border-radius: 99px;
+  outline: none;
+  cursor: pointer;
+}
+
+.bento-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--clr-white);
+  border: 3px solid var(--clr-blue);
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(39, 39, 186, 0.15);
+  transition: transform var(--t-fast), background var(--t-fast);
+}
+
+.bento-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+  background: var(--clr-blue-pale);
+}
+
+.bento-slider-value {
+  font-weight: 700;
+  font-size: 1.25rem;
+  min-width: 50px;
+  text-align: right;
+  color: var(--clr-blue);
 }

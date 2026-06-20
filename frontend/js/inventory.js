@@ -25,25 +25,25 @@ function renderKPIs() {
   const valorStock = allProducts.reduce((s, p) => s + p.cantidad_actual * p.precio_costo, 0);
 
   document.getElementById('inv-kpis').innerHTML = `
-    <div class="kpi-card kpi-card--dark">
-      <span class="kpi-label">Total Productos</span>
-      <span class="kpi-value">${total}</span>
-      <span class="kpi-delta">${activos} activos</span>
+    <div class="bento-card bento-card--dark bento-flex-col">
+      <div class="bento-card-title bento-card-title-white">Total Productos</div>
+      <div class="bento-card-value-large" style="margin-top:auto">\${total}</div>
+      <div style="font-size: 0.85rem; color: var(--clr-gray); font-weight: 500; margin-top: 4px;">\${activos} activos</div>
     </div>
-    <div class="kpi-card kpi-card--blue">
-      <span class="kpi-label">Stock Bajo</span>
-      <span class="kpi-value">${bajo}</span>
-      <span class="kpi-delta">Bajo mínimo de seguridad</span>
+    <div class="bento-card bento-card--white bento-glow-yellow bento-flex-col">
+      <div class="bento-card-title">Stock Bajo</div>
+      <div class="bento-card-value-large" style="margin-top:auto">\${bajo}</div>
+      <div style="font-size: 0.85rem; color: var(--clr-gray); font-weight: 500; margin-top: 4px;">Bajo mínimo de seguridad</div>
     </div>
-    <div class="kpi-card kpi-card--pink">
-      <span class="kpi-label">Valor en Stock</span>
-      <span class="kpi-value" style="font-size:1.4rem">${formatCurrency(valorStock)}</span>
-      <span class="kpi-delta">Precio costo</span>
+    <div class="bento-card bento-card--white bento-glow-blue-bottom bento-flex-col">
+      <div class="bento-card-title">Valor en Stock</div>
+      <div class="bento-card-value" style="margin-top:auto">\${formatCurrency(valorStock)}</div>
+      <div style="font-size: 0.85rem; color: var(--clr-gray); font-weight: 500; margin-top: 4px;">Precio costo</div>
     </div>
-    <div class="kpi-card kpi-card--accent">
-      <span class="kpi-label">Categorías</span>
-      <span class="kpi-value">${new Set(allProducts.map(p=>p.categoria).filter(Boolean)).size}</span>
-      <span class="kpi-delta">Familias de productos</span>
+    <div class="bento-card bento-card--white bento-glow-yellow bento-flex-col">
+      <div class="bento-card-title">Categorías</div>
+      <div class="bento-card-value-large" style="margin-top:auto">\${new Set(allProducts.map(p=>p.categoria).filter(Boolean)).size}</div>
+      <div style="font-size: 0.85rem; color: var(--clr-gray); font-weight: 500; margin-top: 4px;">Familias de productos</div>
     </div>
   `;
 }
