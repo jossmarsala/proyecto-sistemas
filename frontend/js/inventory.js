@@ -19,12 +19,14 @@ async function loadInventory() {
 }
 
 function renderKPIs() {
+  const container = document.getElementById('inv-kpis');
+  if (!container) return;
   const total   = allProducts.length;
   const activos = allProducts.filter(p => p.activo).length;
   const bajo    = allProducts.filter(p => p.cantidad_actual <= p.stock_minimo_seguridad).length;
   const valorStock = allProducts.reduce((s, p) => s + p.cantidad_actual * p.precio_costo, 0);
 
-  document.getElementById('inv-kpis').innerHTML = `
+  container.innerHTML = `
     <div class="bento-card bento-card--dark bento-flex-col">
       <div class="bento-card-title bento-card-title-white">Total Productos</div>
       <div class="bento-card-value-large" style="margin-top:auto">${total}</div>
@@ -103,7 +105,7 @@ function renderTable(products) {
         <div style="font-size:.68rem;color:#7C8294;margin-top:2px">mín: ${p.stock_minimo_seguridad}</div>
       </td>
       <td style="text-align:center">
-        <button class="btn btn-ghost btn-sm" onclick="openEditProduct(${JSON.stringify(JSON.stringify(p))})"><i class="ph ph-pencil-simple"></i>️ Editar</button>
+        <button class="btn btn-ghost btn-sm" onclick="openEditProduct(${p.id_producto})"><i class="ph ph-pencil-simple"></i> Editar</button>
       </td>
     </tr>`;
   }).join('');
@@ -142,8 +144,9 @@ async function createProduct() {
 
 // ── Edit product ─────────────────────────────────────────────────────────────
 
-function openEditProduct(jsonStr) {
-  const p = JSON.parse(jsonStr);
+function openEditProduct(id) {
+  const p = allProducts.find(x => x.id_producto === id);
+  if (!p) return;
   document.getElementById('edit-product-id').value = p.id_producto;
   document.getElementById('edit-product-title').textContent = `Editar Producto: ${p.nombre}`;
   document.getElementById('ep-stock').value = p.cantidad_actual;
