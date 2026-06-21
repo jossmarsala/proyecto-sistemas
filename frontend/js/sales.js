@@ -185,6 +185,7 @@ async function checkout() {
     document.getElementById('sale-ref').value = '';
     allProducts = [];   // refresh cache
     loadSalesHistory();
+    loadAlertBadge();   // update alerts after stock change
   } catch (e) {
     showToast('Error: ' + e.message, 'error', 6000);
   } finally {

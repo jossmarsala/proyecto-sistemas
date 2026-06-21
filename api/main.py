@@ -100,7 +100,7 @@ def grafico_ventas(
                     COUNT(*) AS num_ventas,
                     COALESCE(SUM(total), 0) AS ingreso
                 FROM ventas
-                WHERE fecha_hora >= datetime('now', ?)
+                WHERE fecha_hora >= date('now', 'localtime', ?)
                   AND estado != 'Cancelado'
                   {sc}
                 GROUP BY dia

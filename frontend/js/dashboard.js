@@ -113,18 +113,18 @@ function drawWeeklyBarChart(canvasId, data, valueKey) {
   const H = canvas.height = canvas.parentElement.clientHeight || 180;
   ctx.clearRect(0, 0, W, H);
   
-  const last6 = data.slice(-6);
-  const values = last6.map(d => d[valueKey]);
+  const last7 = data.slice(-7);
+  const values = last7.map(d => d[valueKey]);
   const maxV = Math.max(...values, 1);
   
   const dayNames = ['D', 'L', 'M', 'M', 'J', 'V', 'S'];
-  const labels = last6.map(d => {
+  const labels = last7.map(d => {
     const dateObj = new Date(d.dia + 'T00:00:00');
     return dayNames[dateObj.getDay()];
   });
   
   const PAD = { top: 30, right: 10, bottom: 35, left: 10 };
-  const numBars = last6.length;
+  const numBars = last7.length;
   const chartW = W - PAD.left - PAD.right;
   const chartH = H - PAD.top - PAD.bottom;
   
@@ -139,7 +139,7 @@ function drawWeeklyBarChart(canvasId, data, valueKey) {
   ctx.lineTo(W - PAD.right, H - 28);
   ctx.stroke();
 
-  last6.forEach((d, i) => {
+  last7.forEach((d, i) => {
     const val = d[valueKey];
     const barH = Math.max((val / maxV) * chartH, 10);
     const x = PAD.left + i * (barW + gap);

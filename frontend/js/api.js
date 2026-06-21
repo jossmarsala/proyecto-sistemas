@@ -23,7 +23,7 @@ async function apiFetch(path, options = {}) {
 }
 
 const api = {
-  get:    (path)          => apiFetch(path),
+  get:    (path)          => apiFetch(path, { cache: 'no-store' }),
   post:   (path, body)    => apiFetch(path, { method: 'POST', body: JSON.stringify(body) }),
   put:    (path, body)    => apiFetch(path, { method: 'PUT',  body: JSON.stringify(body) }),
   patch:  (path, body={}) => apiFetch(path, { method: 'PATCH', body: JSON.stringify(body) }),
@@ -84,9 +84,13 @@ async function loadAlertBadge() {
   try {
     const alerts = await api.get('/alertas?solo_activas=true');
     const badge = document.getElementById('alert-badge');
-    if (badge && alerts.length > 0) {
-      badge.textContent = alerts.length;
-      badge.style.display = 'inline';
+    if (badge) {
+      if (alerts.length > 0) {
+        badge.textContent = alerts.length;
+        badge.style.display = 'inline';
+      } else {
+        badge.style.display = 'none';
+      }
     }
   } catch {}
 }
