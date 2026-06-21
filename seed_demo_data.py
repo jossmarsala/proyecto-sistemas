@@ -27,9 +27,9 @@ conn.execute("PRAGMA foreign_keys = ON")
 # ── Products ──────────────────────────────────────────────────────────────────
 
 PRODUCTOS = [
-    ("FER-001", "Tornillo autorroscante 5mm",  "Tornillería",  12.0,  22.0, 500, 50),
-    ("FER-002", "Tornillo hexagonal M8",        "Tornillería",  18.0,  35.0, 300, 40),
-    ("FER-003", "Tuerca mariposa 10mm",         "Tornillería",  8.0,   15.0, 400, 60),
+    ("FER-001", "Tornillo autorroscante 5mm",  None,  12.0,  22.0, 500, 50),
+    ("FER-002", "Tornillo hexagonal M8",        None,  18.0,  35.0, 300, 40),
+    ("FER-003", "Tuerca mariposa 10mm",         None,  8.0,   15.0, 400, 60),
     ("PIN-001", "Pintura látex interior 4L",    "Pinturas",    650.0,1100.0,  80, 10),
     ("PIN-002", "Esmalte sintético blanco 1L",  "Pinturas",    320.0, 550.0,  60,  8),
     ("HER-001", "Taladro percutor 750W",        "Herramientas",4200.0,7500.0, 20,  3),

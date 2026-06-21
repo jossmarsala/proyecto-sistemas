@@ -193,9 +193,9 @@ async function loadAlerts() {
     if (!alerts.length) {
       if (titleCountEl) titleCountEl.textContent = 'Alertas activas (0)';
       container.innerHTML = `
-        <div class="empty-state" style="color: rgba(255,255,255,0.4); text-align: center; padding: 20px;">
-          <div class="empty-state__icon" style="font-size: 24px; margin-bottom: 8px;"><i class="ph-fill ph-check-circle"></i></div>
-          <div class="empty-state__text">Sin alertas activas</div>
+        <div style="color: rgba(255,255,255,0.4); display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; width: 100%;">
+          <i class="ph-fill ph-check-circle" style="font-size: 24px; margin-bottom: 6px;"></i>
+          <span style="font-size: 0.85rem; font-weight: 500;">Sin alertas activas</span>
         </div>`;
       return;
     }
