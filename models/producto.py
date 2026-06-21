@@ -23,6 +23,13 @@ class PrecioUpdate(BaseModel):
     precio_venta: Optional[float] = Field(None, ge=0)
 
 
+class ProductoUpdate(BaseModel):
+    precio_costo: Optional[float] = Field(None, ge=0)
+    precio_venta: Optional[float] = Field(None, ge=0)
+    cantidad_actual: Optional[float] = Field(None, ge=0)
+    id_sucursal: Optional[int] = Field(1, ge=1)
+
+
 # ── Response ──────────────────────────────────────────────────────────────────
 
 class ProductoResponse(BaseModel):

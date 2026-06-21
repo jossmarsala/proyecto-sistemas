@@ -1,10 +1,10 @@
 from fastapi import APIRouter, HTTPException, Query
 from typing import List, Optional
 
-from models import ProductoCreate, ProductoResponse, ProductoConStock, PrecioUpdate
+from models import ProductoCreate, ProductoResponse, ProductoConStock, PrecioUpdate, ProductoUpdate
 from services.producto_service import (
     crear_producto, listar_productos, get_producto,
-    actualizar_precio, prediccion_quiebre
+    actualizar_precio, prediccion_quiebre, actualizar_producto
 )
 
 router = APIRouter(prefix="/productos", tags=["Productos"])
@@ -56,6 +56,17 @@ def quiebre(
 def get_one(id_producto: int):
     try:
         return get_producto(id_producto)
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
+
+@router.put("/{id_producto}", response_model=ProductoResponse)
+def update_product(id_producto: int, data: ProductoUpdate):
+    """
+    Updates price and/or stock.
+    """
+    try:
+        return actualizar_producto(id_producto, data)
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
 

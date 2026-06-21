@@ -44,7 +44,7 @@ async function doSearch(q) {
       return;
     }
     dropdown.innerHTML = matches.map(p => `
-      <div class="search-result-item" onclick="addToCart(${JSON.stringify(JSON.stringify(p))})">
+      <div class="search-result-item" onclick="addToCartById('${p.id_producto}')">
         <div>
           <div class="sri-name">${p.nombre}</div>
           <div class="sri-sku">${p.sku || 'Sin SKU'} · ${p.categoria || 'Sin categoría'}</div>
@@ -64,12 +64,13 @@ async function doSearch(q) {
 
 // ── Cart management ────────────────────────────────────────────────────────
 
-function addToCart(jsonStr) {
-  const producto = JSON.parse(jsonStr);
+function addToCartById(id_producto) {
+  const producto = allProducts.find(p => String(p.id_producto) === String(id_producto));
+  if (!producto) return;
   document.getElementById('search-results').classList.remove('visible');
   document.getElementById('product-search').value = '';
 
-  const existing = cart.find(i => i.id_producto === producto.id_producto);
+  const existing = cart.find(i => String(i.id_producto) === String(producto.id_producto));
   if (existing) {
     if (existing.cantidad >= producto.cantidad_actual) {
       showToast('Stock insuficiente para agregar más unidades', 'warning'); return;
@@ -199,17 +200,20 @@ function clearClient() {
   document.getElementById('client-display').style.display = 'none';
 }
 
+let currentClientResults = [];
+
 async function searchClients(q) {
   const container = document.getElementById('client-results');
   container.innerHTML = '<div class="spinner" style="margin:20px auto"></div>';
   try {
     const clients = await api.get(`/clientes${q ? `?nombre=${encodeURIComponent(q)}` : ''}?limit=20`);
+    currentClientResults = clients;
     if (!clients.length) {
       container.innerHTML = '<div class="empty-state"><div class="empty-state__text">Sin resultados</div></div>';
       return;
     }
     container.innerHTML = clients.map(c => `
-      <div class="search-result-item" onclick="selectClient(${JSON.stringify(JSON.stringify(c))})">
+      <div class="search-result-item" onclick="selectClientById('${c.id_cliente}')">
         <div>
           <div class="sri-name">${c.nombre} ${c.apellido || ''}</div>
           <div class="sri-sku">Tel: ${c.telefono || '—'} · CC: ${formatCurrency(c.saldo_cuenta_corriente)}</div>
@@ -224,8 +228,13 @@ async function searchClients(q) {
   } catch { container.innerHTML = '<div style="padding:14px;text-align:center;color:#ef4444">Error cargando clientes</div>'; }
 }
 
-function selectClient(jsonStr) {
-  selectedClient = JSON.parse(jsonStr);
+function selectClientById(id) {
+  const c = currentClientResults.find(client => String(client.id_cliente) === String(id));
+  if (c) selectClient(c);
+}
+
+function selectClient(c) {
+  selectedClient = c;
   document.getElementById('client-name-tag').textContent = `${selectedClient.nombre} ${selectedClient.apellido || ''}`.trim();
   document.getElementById('client-display').style.display = 'flex';
   closeModal('modal-client');
@@ -241,7 +250,7 @@ async function createClient() {
 
   try {
     const c = await api.post('/clientes', { nombre, apellido, telefono, limite_credito: credito });
-    selectClient(JSON.stringify(c));
+    selectClient(c);
     closeModal('modal-new-client');
     showToast(`Cliente "${c.nombre}" creado`, 'success');
   } catch (e) { showToast(e.message, 'error'); }

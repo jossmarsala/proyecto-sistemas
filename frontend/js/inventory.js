@@ -79,7 +79,7 @@ function filterTable(q) {
 function renderTable(products) {
   const tbody = document.getElementById('product-tbody');
   if (!products.length) {
-    tbody.innerHTML = '<tr class="no-data-row"><td colspan="8">Sin productos</td></tr>';
+    tbody.innerHTML = '<tr class="no-data-row"><td colspan="7">Sin productos</td></tr>';
     return;
   }
   tbody.innerHTML = products.map(p => {
@@ -103,10 +103,7 @@ function renderTable(products) {
         <div style="font-size:.68rem;color:#7C8294;margin-top:2px">mín: ${p.stock_minimo_seguridad}</div>
       </td>
       <td style="text-align:center">
-        <span class="badge ${p.activo ? 'badge-green' : 'badge-red'}">${p.activo ? 'Activo' : 'Inactivo'}</span>
-      </td>
-      <td style="text-align:center">
-        <button class="btn btn-ghost btn-sm" onclick="openEditPrice(${JSON.stringify(JSON.stringify(p))})"><i class="ph ph-pencil-simple"></i>️ Precio</button>
+        <button class="btn btn-ghost btn-sm" onclick="openEditProduct(${JSON.stringify(JSON.stringify(p))})"><i class="ph ph-pencil-simple"></i>️ Editar</button>
       </td>
     </tr>`;
   }).join('');
@@ -143,30 +140,36 @@ async function createProduct() {
   } catch (e) { showToast(e.message, 'error'); }
 }
 
-// ── Edit price ─────────────────────────────────────────────────────────────
+// ── Edit product ─────────────────────────────────────────────────────────────
 
-function openEditPrice(jsonStr) {
+function openEditProduct(jsonStr) {
   const p = JSON.parse(jsonStr);
-  document.getElementById('edit-price-id').value = p.id_producto;
-  document.getElementById('edit-price-title').textContent = `Editar Precio: ${p.nombre}`;
+  document.getElementById('edit-product-id').value = p.id_producto;
+  document.getElementById('edit-product-title').textContent = `Editar Producto: ${p.nombre}`;
+  document.getElementById('ep-stock').value = p.cantidad_actual;
   document.getElementById('ep-costo').value = p.precio_costo;
   document.getElementById('ep-venta').value = p.precio_venta;
-  openModal('modal-edit-price');
+  openModal('modal-edit-product');
 }
 
-async function savePrice() {
-  const id    = parseInt(document.getElementById('edit-price-id').value);
+async function saveProductEdit() {
+  const id    = parseInt(document.getElementById('edit-product-id').value);
+  const stock = parseFloat(document.getElementById('ep-stock').value);
   const costo = parseFloat(document.getElementById('ep-costo').value);
   const venta = parseFloat(document.getElementById('ep-venta').value);
 
-  if (!id || isNaN(costo) || isNaN(venta)) { showToast('Datos inválidos', 'error'); return; }
+  if (!id || isNaN(stock) || isNaN(costo) || isNaN(venta)) { showToast('Datos inválidos', 'error'); return; }
 
   try {
-    await api.put(`/productos/${id}/precio`, { precio_costo: costo, precio_venta: venta });
-    showToast('Precio actualizado correctamente', 'success');
-    closeModal('modal-edit-price');
+    await api.put(`/productos/${id}`, { cantidad_actual: stock, precio_costo: costo, precio_venta: venta, id_sucursal: 1 });
+    showToast('Producto actualizado correctamente', 'success');
+    closeModal('modal-edit-product');
     const idx = allProducts.findIndex(p => p.id_producto === id);
-    if (idx >= 0) { allProducts[idx].precio_costo = costo; allProducts[idx].precio_venta = venta; }
+    if (idx >= 0) { 
+      allProducts[idx].cantidad_actual = stock; 
+      allProducts[idx].precio_costo = costo; 
+      allProducts[idx].precio_venta = venta; 
+    }
     filterTable();
   } catch (e) { showToast(e.message, 'error'); }
 }

@@ -10,7 +10,7 @@ from datetime import datetime
 from typing import List, Optional
 
 from db.connection import get_connection
-from models.producto import ProductoCreate, ProductoResponse, ProductoConStock, PrecioUpdate
+from models.producto import ProductoCreate, ProductoResponse, ProductoConStock, PrecioUpdate, ProductoUpdate
 
 
 def _row_to_producto(row: sqlite3.Row) -> ProductoResponse:
@@ -166,6 +166,49 @@ def actualizar_precio(id_producto: int, data: PrecioUpdate) -> ProductoResponse:
                WHERE id_producto = ?""",
             (nuevo_costo, nuevo_venta, ahora, id_producto)
         )
+        conn.commit()
+
+        row = conn.execute("SELECT * FROM productos WHERE id_producto = ?", (id_producto,)).fetchone()
+        return _row_to_producto(row)
+    except Exception:
+        conn.rollback()
+        raise
+    finally:
+        conn.close()
+
+
+def actualizar_producto(id_producto: int, data: ProductoUpdate) -> ProductoResponse:
+    """
+    Updates a product's price and stock.
+    """
+    conn = get_connection()
+    try:
+        conn.execute("BEGIN")
+        row = conn.execute(
+            "SELECT * FROM productos WHERE id_producto = ?", (id_producto,)
+        ).fetchone()
+        if not row:
+            raise ValueError(f"Producto id={id_producto} no encontrado.")
+
+        nuevo_costo = data.precio_costo if data.precio_costo is not None else row["precio_costo"]
+        nuevo_venta = data.precio_venta if data.precio_venta is not None else row["precio_venta"]
+        ahora = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+        conn.execute(
+            """UPDATE productos
+               SET precio_costo = ?, precio_venta = ?, actualizado_en = ?
+               WHERE id_producto = ?""",
+            (nuevo_costo, nuevo_venta, ahora, id_producto)
+        )
+
+        if data.cantidad_actual is not None:
+            conn.execute(
+                """UPDATE stock_sucursal
+                   SET cantidad_actual = ?
+                   WHERE id_producto = ? AND id_sucursal = ?""",
+                (data.cantidad_actual, id_producto, data.id_sucursal)
+            )
+
         conn.commit()
 
         row = conn.execute("SELECT * FROM productos WHERE id_producto = ?", (id_producto,)).fetchone()
