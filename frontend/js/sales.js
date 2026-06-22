@@ -165,7 +165,7 @@ async function checkout() {
 
   const btn = document.getElementById('btn-checkout');
   btn.disabled = true;
-  btn.textContent = '<i class="ph ph-hourglass"></i> Procesando…';
+  btn.innerHTML = '<i class="ph ph-hourglass"></i> Procesando…';
 
   const payload = {
     id_cliente:  selectedClient?.id_cliente || null,
@@ -190,7 +190,7 @@ async function checkout() {
     showToast('Error: ' + e.message, 'error', 6000);
   } finally {
     btn.disabled = false;
-    btn.textContent = '<i class="ph-fill ph-lightning"></i> Finalizar y Guardar';
+    btn.innerHTML = '<i class="ph-fill ph-lightning"></i> Finalizar y Guardar';
   }
 }
 
