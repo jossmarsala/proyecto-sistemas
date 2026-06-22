@@ -10,7 +10,20 @@ Docs:  http://localhost:8000/docs
 App:   http://localhost:8000
 """
 
+# ── Vercel sys.path fix ───────────────────────────────────────────────────────
+# Vercel runs this file as a serverless function from the project root, but
+# Python's sys.path only contains the function's own directory.  We need to
+# add the project root so that sibling packages (db, services, models, …) can
+# be imported with their plain names.
+import sys
+import os
 from pathlib import Path
+
+_PROJECT_ROOT = Path(__file__).resolve().parent.parent
+if str(_PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(_PROJECT_ROOT))
+# ─────────────────────────────────────────────────────────────────────────────
+
 from datetime import datetime, timedelta
 from typing import Optional
 
@@ -26,6 +39,7 @@ from api.routers.simulacion import router as simulacion_router
 
 # ── Paths ─────────────────────────────────────────────────────────────────────
 
+_IS_VERCEL  = os.environ.get("VERCEL") == "1"
 BASE_DIR    = Path(__file__).resolve().parent.parent
 SCHEMA_PATH = BASE_DIR / "database" / "schema.sql"
 FRONTEND    = BASE_DIR / "frontend"
@@ -34,6 +48,9 @@ FRONTEND    = BASE_DIR / "frontend"
 
 def _apply_schema() -> None:
     if not SCHEMA_PATH.exists():
+        if _IS_VERCEL:
+            print("⚠️  FARO: schema.sql not found on Vercel — skipping migration.")
+            return
         raise FileNotFoundError(f"Schema file not found: {SCHEMA_PATH}")
     run_migration(SCHEMA_PATH.read_text(encoding="utf-8"))
     print("✅ FARO: Base de datos verificada / migrada correctamente.")
@@ -122,10 +139,16 @@ def grafico_ventas(
         conn.close()
 
 # ── Static frontend ───────────────────────────────────────────────────────────
+# StaticFiles mounting is skipped on Vercel (read-only / ephemeral FS).
+# On Vercel the frontend is served by its own static output, not FastAPI.
 
-if FRONTEND.exists():
-    app.mount("/static", StaticFiles(directory=str(FRONTEND)), name="static")
+if FRONTEND.exists() and not _IS_VERCEL:
+    try:
+        app.mount("/static", StaticFiles(directory=str(FRONTEND)), name="static")
+    except Exception:
+        pass
 
+if not _IS_VERCEL and FRONTEND.exists():
     @app.get("/", include_in_schema=False)
     @app.get("/dashboard", include_in_schema=False)
     @app.get("/sales", include_in_schema=False)
