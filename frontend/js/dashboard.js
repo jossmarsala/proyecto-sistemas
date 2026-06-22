@@ -316,14 +316,17 @@ async function loadRecentSales() {
       const clientName = v.id_cliente ? `Cliente #${v.id_cliente}` : 'Mostrador';
       const formattedTotal = '$ ' + Math.round(v.total);
       
+      const paymentIcon = v.tipo_pago.toLowerCase() === 'efectivo' ? '<i class="ph ph-money"></i>' : '<i class="ph ph-credit-card"></i>';
+      const paymentPill = `<span style="background: rgba(0,0,0,0.05); padding: 4px 10px; border-radius: 99px; font-size: 0.8rem; font-weight: 600; width: fit-content; display: inline-flex; align-items: center; gap: 4px;">${paymentIcon} ${v.tipo_pago}</span>`;
+      
       return `
-        <div class="bento-pill-item">
+        <div class="bento-pill-item" style="padding: 12px 24px;">
           <div class="bento-pill-row">
-            <span>#${v.id_venta}</span>
-            <span>${formattedTime}</span>
-            <span>${clientName}</span>
-            <span>${v.tipo_pago}</span>
-            <span>${formattedTotal}</span>
+            <span style="font-weight: 600; color: var(--clr-gray); font-size: 0.9rem;">#${v.id_venta}</span>
+            <span style="color: var(--clr-gray); font-size: 0.85rem;">${formattedTime}</span>
+            <span style="font-weight: 500;">${clientName}</span>
+            <span>${paymentPill}</span>
+            <span style="font-weight: 700; color: var(--clr-dark); font-size: 1rem;">${formattedTotal}</span>
           </div>
         </div>`;
     }).join('');
