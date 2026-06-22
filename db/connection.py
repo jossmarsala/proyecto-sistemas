@@ -16,6 +16,9 @@ def _resolve_db_path() -> Path:
     Returns the correct absolute path to ventas.db regardless of whether
     we are running as a plain .py script, a frozen .exe, or via uvicorn.
     """
+    if os.environ.get("VERCEL") == "1":
+        return Path("/tmp/ventas.db")
+
     if getattr(sys, "frozen", False):
         # PyInstaller / frozen exe: db lives next to the executable
         base = Path(sys.executable).parent
