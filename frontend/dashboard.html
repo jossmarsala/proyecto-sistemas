@@ -13,7 +13,6 @@
 
 <body>
 
-  <!-- ══ SIDEBAR ═══════════════════════════════════════════════════════════ -->
   <aside class="sidebar">
     <div class="sidebar__cutout">
       <svg width="30" height="80" viewBox="0 0 30 80" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -45,7 +44,6 @@
     </nav>
   </aside>
 
-  <!-- ══ MAIN CONTENT ═══════════════════════════════════════════════════════ -->
   <main class="main-content">
 
     <div class="page-header fade-in">
@@ -65,13 +63,12 @@
       </div>
     </div>
 
-    <!-- Bento Layout -->
     <div class="bento-layout fade-in">
-      <!-- LEFT COLUMN -->
+      
       <div class="bento-left">
-        <!-- ROW 1 -->
+        
         <div class="bento-row bento-row-3">
-          <!-- Ingresos del mes -->
+          
           <div class="bento-card bento-card--white bento-glow-yellow bento-flex-col">
             <div class="bento-card-title">Ingresos del mes</div>
             <div class="bento-sparkline-container">
@@ -84,7 +81,6 @@
             </div>
           </div>
 
-          <!-- Ventas totales -->
           <div class="bento-card bento-card--white bento-glow-yellow bento-flex-col">
             <div class="bento-card-title">Ventas totales</div>
             <div style="display:flex; align-items: flex-end; gap: 8px; margin-top: auto;">
@@ -94,7 +90,6 @@
             </div>
           </div>
 
-          <!-- Nueva Venta -->
           <div class="bento-card bento-card--dark bento-card-center" onclick="window.location.href='/static/sales.html'"
             style="cursor:pointer">
             <div class="bento-icon-large">+</div>
@@ -102,7 +97,6 @@
           </div>
         </div>
 
-        <!-- ROW 2: Alertas activas -->
         <div class="bento-card bento-card--dark" style="overflow: visible;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
             <div class="bento-card-title bento-card-title-white" id="alert-title-count" style="margin-bottom: 0;">
@@ -126,7 +120,6 @@
           </div>
         </div>
 
-        <!-- ROW 3: Ventas recientes -->
         <div class="bento-card bento-card--white bento-glow-blue-bottom" style="flex: 1;">
           <div class="bento-card-title" style="margin-bottom: 20px;">Ventas recientes</div>
           <div class="bento-pill-list bento-pill-list--light" id="recent-sales-list">
@@ -135,9 +128,8 @@
         </div>
       </div>
 
-      <!-- RIGHT COLUMN -->
       <div class="bento-right">
-        <!-- Ajuste Global Precios -->
+        
         <div class="bento-card bento-card--white bento-glow-blue-right">
           <div style="margin-bottom: 20px;">
             <div class="bento-card-title" style="margin-bottom: 4px;">Ajustar precios</div>
@@ -153,7 +145,6 @@
             Ajuste</button>
         </div>
 
-        <!-- Ingresos esta semana -->
         <div class="bento-card bento-card--white bento-glow-yellow bento-card-tall">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
             <div class="bento-card-title" style="margin-bottom: 0;">Ingresos esta semana</div>
@@ -169,7 +160,6 @@
           </div>
         </div>
 
-        <!-- VER CATALOGO -->
         <button class="btn btn-catalog fade-in" onclick="window.location.href='/static/inventory.html'">
           <i class="ph ph-book-open" style="font-size: 1.1rem;"></i>
           Ver catálogo

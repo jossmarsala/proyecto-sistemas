@@ -8,7 +8,7 @@ async function loadDashboard() {
   const dias = document.getElementById('period-select').value || 30;
 
   try {
-    // Parallel fetch
+    
     const [stats, chart] = await Promise.all([
       api.get(`/ventas/stats/resumen${sucursal ? `?id_sucursal=${sucursal}` : ''}`),
       api.get(`/stats/grafico?dias=${dias}${sucursal ? `&id_sucursal=${sucursal}` : ''}`),
@@ -47,8 +47,7 @@ function drawSparkline(canvasId, data, valueKey) {
   const canvas = document.getElementById(canvasId);
   if (!canvas || !data.length) return;
   const ctx = canvas.getContext('2d');
-  
-  // Set dimensions based on parent container
+
   const W = canvas.width  = canvas.parentElement.clientWidth;
   const H = canvas.height = canvas.parentElement.clientHeight || 60;
   ctx.clearRect(0, 0, W, H);
@@ -57,8 +56,7 @@ function drawSparkline(canvasId, data, valueKey) {
   const maxV = Math.max(...values, 1);
   const minV = Math.min(...values, 0);
   const range = maxV - minV;
-  
-  // Draw light grey background grid to match the mockup
+
   ctx.strokeStyle = 'rgba(0, 0, 0, 0.05)';
   ctx.lineWidth = 1;
   const gridRows = 4;
@@ -77,8 +75,7 @@ function drawSparkline(canvasId, data, valueKey) {
     ctx.lineTo(x, H);
     ctx.stroke();
   }
-  
-  // Plot line
+
   const points = data.map((d, i) => {
     const x = (W / (data.length - 1)) * i;
     const y = H - 8 - ((d[valueKey] - minV) / (range || 1)) * (H - 16);
@@ -90,8 +87,7 @@ function drawSparkline(canvasId, data, valueKey) {
   ctx.lineWidth = 3;
   ctx.lineCap = 'round';
   ctx.lineJoin = 'round';
-  
-  // Bezier curve drawing for smooth sparkline
+
   if (points.length > 0) {
     ctx.moveTo(points[0].x, points[0].y);
     for (let i = 0; i < points.length - 1; i++) {
@@ -130,8 +126,7 @@ function drawWeeklyBarChart(canvasId, data, valueKey) {
   
   const gap = 16;
   const barW = (chartW - (gap * (numBars - 1))) / numBars;
-  
-  // Draw horizontal separator line for labels
+
   ctx.strokeStyle = 'rgba(0, 0, 0, 0.06)';
   ctx.lineWidth = 1;
   ctx.beginPath();
@@ -144,14 +139,12 @@ function drawWeeklyBarChart(canvasId, data, valueKey) {
     const barH = Math.max((val / maxV) * chartH, 10);
     const x = PAD.left + i * (barW + gap);
     const y = PAD.top + chartH - barH;
-    
-    // Draw track background (fully rounded)
+
     ctx.fillStyle = 'rgba(0, 0, 0, 0.04)';
     ctx.beginPath();
     ctx.roundRect(x, PAD.top, barW, chartH, 99);
     ctx.fill();
 
-    // Draw filled bar (gradient)
     const grad = ctx.createLinearGradient(x, y, x, PAD.top + chartH);
     grad.addColorStop(0, '#7C8294');
     grad.addColorStop(1, '#1D2528');
@@ -159,14 +152,12 @@ function drawWeeklyBarChart(canvasId, data, valueKey) {
     ctx.beginPath();
     ctx.roundRect(x, y, barW, barH, 99);
     ctx.fill();
-    
-    // Draw label
+
     ctx.fillStyle = i === numBars - 1 ? '#1D2528' : '#7C8294';
     ctx.font = i === numBars - 1 ? '600 13px Poppins, sans-serif' : '500 13px Poppins, sans-serif';
     ctx.textAlign = 'center';
     ctx.fillText(labels[i], x + barW / 2, H - 8);
-    
-    // Draw value on top of the bar
+
     ctx.fillStyle = '#7C8294';
     ctx.font = '600 11px Poppins, sans-serif';
     if (val > 0) {
@@ -225,7 +216,6 @@ async function loadAlerts() {
 
     updateAlertStackDisplay();
 
-    // Update badge
     const badge = document.getElementById('alert-badge');
     if (badge) { badge.textContent = alerts.length; badge.style.display = 'inline'; }
   } catch {
@@ -278,7 +268,7 @@ async function resolveAlert(id) {
     document.getElementById(`alert-${id}`)?.remove();
     showToast('Alerta resuelta', 'success');
     loadAlertBadge();
-    loadAlerts(); // Reload list to update title count
+    loadAlerts(); 
   } catch (e) { showToast(e.message, 'error'); }
 }
 
@@ -348,7 +338,6 @@ async function aplicarAjusteGlobal() {
   }
 }
 
-// Range slider logic
 const slider = document.getElementById('global-price-slider');
 const sliderVal = document.getElementById('global-price-value');
 if (slider && sliderVal) {
@@ -362,7 +351,6 @@ if (slider && sliderVal) {
   updateSliderTrack();
 }
 
-// Event listeners
 document.getElementById('sucursal-select').addEventListener('change', loadDashboard);
 document.getElementById('period-select').addEventListener('change', async () => {
   const dias = document.getElementById('period-select').value;
@@ -377,10 +365,9 @@ window.addEventListener('resize', () => {
   if (chartData.length) renderRevenueCharts(chartData);
 });
 
-// Boot
 loadSucursales();
 loadDashboard();
-// Initialize border glow hover interactions for all bento cards
+
 function initBorderGlow() {
   const cards = document.querySelectorAll('.bento-card');
   
@@ -413,8 +400,7 @@ function initBorderGlow() {
 
   cards.forEach(card => {
     if (card.classList.contains('border-glow-card')) return;
-    
-    // Wrap children in .border-glow-inner dynamically
+
     if (!card.querySelector('.border-glow-inner')) {
       const inner = document.createElement('div');
       inner.className = 'border-glow-inner';
@@ -423,8 +409,7 @@ function initBorderGlow() {
       }
       card.appendChild(inner);
     }
-    
-    // Add edge-light element dynamically
+
     if (!card.querySelector('.edge-light')) {
       const edgeLight = document.createElement('span');
       edgeLight.className = 'edge-light';
@@ -451,7 +436,6 @@ function initBorderGlow() {
   });
 }
 
-// Boot
 initBorderGlow();
 loadSucursales();
 loadDashboard();

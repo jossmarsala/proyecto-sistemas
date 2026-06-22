@@ -76,17 +76,15 @@
     </div>
   </div>
 
-  <!-- Tab navigation -->
   <div class="proj-header-tabs">
     <button class="proj-tab active" onclick="showTab('stockbreak', this)"><i class="ph ph-package"></i> Quiebre de Stock</button>
     <button class="proj-tab" onclick="showTab('whatif', this)"><i class="ph-fill ph-lightning"></i> Simulador What-If</button>
     <button class="proj-tab" onclick="showTab('trend', this)"><i class="ph ph-chart-bar"></i> Tendencia de Ventas</button>
   </div>
 
-  <!-- ════════ TAB 1: Stock Break ════════════════════════════════════════════ -->
   <div class="proj-section visible" id="tab-stockbreak">
     <div class="fade-in" style="display: flex; flex-direction: column; gap: 28px;">
-      <!-- TOP ROW: Cards -->
+      
       <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 28px;">
         <div class="bento-card bento-card--white bento-glow-blue-right" style="display: flex; flex-direction: column; justify-content: space-between;">
           <div>
@@ -105,7 +103,6 @@
         </div>
       </div>
 
-      <!-- BOTTOM ROW: Table -->
       <div class="bento-card bento-card--white bento-glow-yellow" style="padding:0; overflow:hidden;">
         <div class="table-wrapper" style="border:none; box-shadow:none; border-radius:0;">
           <table style="margin:0;">
@@ -128,11 +125,10 @@
     </div>
   </div>
 
-  <!-- ════════ TAB 2: What-If ════════════════════════════════════════════════ -->
   <div class="proj-section" id="tab-whatif">
     <div class="bento-layout fade-in">
       <div class="bento-left">
-        <!-- Big result card -->
+        
         <div class="scenario-result mb-16" id="sim-result-card" style="border-radius: var(--radius-lg);">
           <div class="scenario-result__title">RENTABILIDAD SIMULADA</div>
           <div class="scenario-result__value" id="sim-rent-val">—</div>
@@ -157,7 +153,6 @@
           </div>
         </div>
 
-        <!-- Product-level table -->
         <div class="bento-card bento-card--white bento-glow-yellow" style="padding:0; overflow:hidden; flex:1;">
           <div class="table-wrapper" style="border:none; box-shadow:none; border-radius:0; height:100%;">
             <div style="padding:16px 20px;font-weight:700;font-size:.88rem;border-bottom:1px solid rgba(0,0,0,.06)">
@@ -181,7 +176,7 @@
       </div>
 
       <div class="bento-right">
-        <!-- Slider controls -->
+        
         <div class="bento-card bento-card--white bento-glow-blue-right" style="display:flex;flex-direction:column;gap:20px">
           <div>
             <div class="bento-card-title"><i class="ph ph-gear"></i> Parámetros de Escenario</div>
@@ -217,7 +212,6 @@
     </div>
   </div>
 
-  <!-- ════════ TAB 3: Trend chart ════════════════════════════════════════════ -->
   <div class="proj-section" id="tab-trend">
     <div class="bento-layout fade-in">
       <div class="bento-left">

@@ -3,7 +3,6 @@ from pydantic import BaseModel, Field
 from typing import Optional
 
 
-# ── Request ───────────────────────────────────────────────────────────────────
 
 class ProductoCreate(BaseModel):
     sku: Optional[str] = None

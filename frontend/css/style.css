@@ -1,14 +1,9 @@
-/* =====================================================================
-   FARO — Design System
-   Fonts: Poppins (primary) · Lora (secondary)
-   Palette extracted from provided design board
-   ===================================================================== */
+
 
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Lora:ital,wght@0,400;0,500;1,400&display=swap');
 
-/* ── Tokens ──────────────────────────────────────────────────────────── */
 :root {
-  /* Brand palette */
+  
   --clr-dark: #1D2528;
   --clr-dark-mid: #2C3338;
   --clr-beige: #DEDAC8;
@@ -16,50 +11,41 @@
   --clr-light: #F9F8F7;
   --clr-white: #FFFFFF;
 
-  /* Primary blues */
   --clr-blue: #2727BA;
   --clr-blue-light: #7B7FD4;
   --clr-blue-pale: #BBBDE8;
 
-  /* Accents */
   --clr-accent: #EFFF1D;
-  /* neon yellow */
+  
   --clr-pink: #F2D0C4;
   --clr-pink-deep: #E8A898;
 
-  /* Semantic */
   --clr-success: #22c55e;
   --clr-danger: #ef4444;
   --clr-warning: #f59e0b;
 
-  /* Typography */
   --font-primary: 'Poppins', sans-serif;
   --font-secondary: 'Lora', serif;
 
-  /* Radii */
   --radius-sm: 8px;
   --radius-md: 14px;
   --radius-lg: 20px;
   --radius-xl: 28px;
   --radius-pill: 999px;
 
-  /* Shadows */
   --shadow-sm: 0 2px 8px rgba(0, 0, 0, .06);
   --shadow-md: 0 4px 20px rgba(0, 0, 0, .10);
   --shadow-lg: 0 8px 40px rgba(0, 0, 0, .14);
 
-  /* Sidebar width */
   --sidebar-w: 300px;
-  /* 260px sidebar + 20px margin each side */
+  
   --sidebar-collapsed: 64px;
 
-  /* Transitions */
   --t-fast: 150ms ease;
   --t-mid: 250ms ease;
   --t-slow: 400ms cubic-bezier(.4, 0, .2, 1);
 }
 
-/* ── Reset ───────────────────────────────────────────────────────────── */
 *,
 *::before,
 *::after {
@@ -105,7 +91,6 @@ img {
   max-width: 100%;
 }
 
-/* ── Scrollbar ───────────────────────────────────────────────────────── */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -120,10 +105,6 @@ img {
   border-radius: 99px;
 }
 
-
-/* ══════════════════════════════════════════════════════════════════════
-   SIDEBAR (REDESIGNED)
-   ══════════════════════════════════════════════════════════════════════ */
 .sidebar {
   width: 260px;
   height: calc(100vh - 40px);
@@ -232,7 +213,6 @@ img {
   display: none;
 }
 
-/* Navigation badge (alert counter) */
 .nav-badge {
   display: inline-flex;
   align-items: center;
@@ -248,10 +228,6 @@ img {
   margin-left: 8px;
   line-height: 1;
 }
-
-/* ══════════════════════════════════════════════════════════════════════
-   MAIN LAYOUT
-   ══════════════════════════════════════════════════════════════════════ */
 
 .main-content {
   margin-left: var(--sidebar-w);
@@ -287,9 +263,6 @@ img {
   margin-top: 2px;
 }
 
-/* ══════════════════════════════════════════════════════════════════════
-   BUTTONS
-   ══════════════════════════════════════════════════════════════════════ */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -427,9 +400,6 @@ img {
   transform: translateY(-2px);
 }
 
-/* ══════════════════════════════════════════════════════════════════════
-   CARDS
-   ══════════════════════════════════════════════════════════════════════ */
 .card {
   background: var(--clr-white);
   border-radius: var(--radius-lg);
@@ -444,7 +414,6 @@ img {
   transform: translateY(-2px);
 }
 
-/* KPI card variants */
 .kpi-card {
   background: var(--clr-white);
   border-radius: var(--radius-lg);
@@ -542,9 +511,6 @@ img {
   opacity: 1;
 }
 
-/* ══════════════════════════════════════════════════════════════════════
-   GRID LAYOUTS
-   ══════════════════════════════════════════════════════════════════════ */
 .kpi-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -564,9 +530,6 @@ img {
   gap: 20px;
 }
 
-/* ══════════════════════════════════════════════════════════════════════
-   TABLE
-   ══════════════════════════════════════════════════════════════════════ */
 .table-wrapper {
   overflow-x: auto;
   border-radius: var(--radius-xl);
@@ -585,7 +548,7 @@ table {
 }
 
 thead {
-  /* Handled on th elements */
+  
 }
 
 thead th {
@@ -643,7 +606,6 @@ td.muted {
   font-size: .85rem;
 }
 
-/* Badges inside table */
 .badge {
   display: inline-flex;
   align-items: center;
@@ -674,9 +636,6 @@ td.muted {
   color: var(--clr-gray);
 }
 
-/* ══════════════════════════════════════════════════════════════════════
-   FORM ELEMENTS
-   ══════════════════════════════════════════════════════════════════════ */
 .form-group {
   display: flex;
   flex-direction: column;
@@ -733,7 +692,6 @@ td.muted {
   border-color: var(--clr-blue-light);
 }
 
-/* Range slider */
 .slider-wrap {
   display: flex;
   flex-direction: column;
@@ -786,9 +744,6 @@ input[type="range"]::-webkit-slider-thumb:hover {
   transform: scale(1.2);
 }
 
-/* ══════════════════════════════════════════════════════════════════════
-   SEARCH BAR
-   ══════════════════════════════════════════════════════════════════════ */
 .search-bar {
   position: relative;
   display: flex;
@@ -819,7 +774,6 @@ input[type="range"]::-webkit-slider-thumb:hover {
   box-shadow: 0 0 0 3px rgba(123, 127, 212, .12);
 }
 
-/* Search dropdown */
 .search-results {
   position: absolute;
   top: calc(100% + 6px);
@@ -881,9 +835,6 @@ input[type="range"]::-webkit-slider-thumb:hover {
   white-space: nowrap;
 }
 
-/* ══════════════════════════════════════════════════════════════════════
-   ALERT CARDS
-   ══════════════════════════════════════════════════════════════════════ */
 .alert-item {
   display: flex;
   align-items: flex-start;
@@ -937,9 +888,6 @@ input[type="range"]::-webkit-slider-thumb:hover {
   background: rgba(0, 0, 0, .06);
 }
 
-/* ══════════════════════════════════════════════════════════════════════
-   MODAL
-   ══════════════════════════════════════════════════════════════════════ */
 .modal-overlay {
   position: fixed;
   inset: 0;
@@ -1018,9 +966,6 @@ input[type="range"]::-webkit-slider-thumb:hover {
   margin-top: 24px;
 }
 
-/* ══════════════════════════════════════════════════════════════════════
-   CART (POS)
-   ══════════════════════════════════════════════════════════════════════ */
 .pos-layout {
   display: grid;
   grid-template-columns: 1fr 360px;
@@ -1059,7 +1004,6 @@ input[type="range"]::-webkit-slider-thumb:hover {
   background: var(--clr-light);
 }
 
-/* Cart items */
 .cart-item {
   display: flex;
   align-items: center;
@@ -1146,7 +1090,6 @@ input[type="range"]::-webkit-slider-thumb:hover {
   background: #fee2e2;
 }
 
-/* Cart totals */
 .cart-totals {
   display: flex;
   flex-direction: column;
@@ -1166,7 +1109,6 @@ input[type="range"]::-webkit-slider-thumb:hover {
   border-top: 2px solid var(--clr-dark);
 }
 
-/* Payment methods */
 .payment-methods {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -1201,9 +1143,6 @@ input[type="range"]::-webkit-slider-thumb:hover {
   color: var(--clr-blue);
 }
 
-/* ══════════════════════════════════════════════════════════════════════
-   CHART AREA
-   ══════════════════════════════════════════════════════════════════════ */
 .chart-container {
   position: relative;
   width: 100%;
@@ -1214,9 +1153,6 @@ input[type="range"]::-webkit-slider-thumb:hover {
   border-radius: var(--radius-md);
 }
 
-/* ══════════════════════════════════════════════════════════════════════
-   WHAT-IF MODULE
-   ══════════════════════════════════════════════════════════════════════ */
 .whatif-layout {
   display: grid;
   grid-template-columns: 340px 1fr;
@@ -1283,9 +1219,6 @@ input[type="range"]::-webkit-slider-thumb:hover {
   font-weight: 700;
 }
 
-/* ══════════════════════════════════════════════════════════════════════
-   TOAST NOTIFICATIONS
-   ══════════════════════════════════════════════════════════════════════ */
 .toast-container {
   position: fixed;
   bottom: 24px;
@@ -1330,9 +1263,6 @@ input[type="range"]::-webkit-slider-thumb:hover {
   animation: toastOut .3s ease forwards;
 }
 
-/* ══════════════════════════════════════════════════════════════════════
-   EMPTY STATE
-   ══════════════════════════════════════════════════════════════════════ */
 .empty-state {
   text-align: center;
   padding: 60px 20px;
@@ -1349,7 +1279,6 @@ input[type="range"]::-webkit-slider-thumb:hover {
   font-size: .9rem;
 }
 
-/* Stock level indicator */
 .stock-bar-wrap {
   display: flex;
   align-items: center;
@@ -1382,9 +1311,6 @@ input[type="range"]::-webkit-slider-thumb:hover {
   background: var(--clr-danger);
 }
 
-/* ══════════════════════════════════════════════════════════════════════
-   LOADING STATES
-   ══════════════════════════════════════════════════════════════════════ */
 .skeleton {
   background: linear-gradient(90deg, var(--clr-beige) 25%, #f3f2ec 50%, var(--clr-beige) 75%);
   background-size: 200% 100%;
@@ -1418,9 +1344,6 @@ input[type="range"]::-webkit-slider-thumb:hover {
   }
 }
 
-/* ══════════════════════════════════════════════════════════════════════
-   ANIMATIONS
-   ══════════════════════════════════════════════════════════════════════ */
 @keyframes slideIn {
   from {
     opacity: 0;
@@ -1471,9 +1394,6 @@ input[type="range"]::-webkit-slider-thumb:hover {
   animation: fadeIn .4s ease;
 }
 
-/* ══════════════════════════════════════════════════════════════════════
-   UTILS
-   ══════════════════════════════════════════════════════════════════════ */
 .text-muted {
   color: var(--clr-gray);
 }
@@ -1557,14 +1477,12 @@ input[type="range"]::-webkit-slider-thumb:hover {
   font-size: .88rem;
 }
 
-/* Divider */
 .divider {
   height: 1px;
   background: rgba(0, 0, 0, .06);
   margin: 16px 0;
 }
 
-/* Tag filters */
 .filter-tags {
   display: flex;
   gap: 8px;
@@ -1589,7 +1507,6 @@ input[type="range"]::-webkit-slider-thumb:hover {
   background: rgba(39, 39, 186, .06);
 }
 
-/* Projection table highlight */
 .highlight-positive {
   color: var(--clr-success);
   font-weight: 700;
@@ -1600,9 +1517,6 @@ input[type="range"]::-webkit-slider-thumb:hover {
   font-weight: 700;
 }
 
-/* =====================================================================
-   BENTO DASHBOARD REDESIGN
-   ===================================================================== */
 .bento-layout {
   display: grid;
   grid-template-columns: 2fr 1fr;
@@ -1616,7 +1530,7 @@ input[type="range"]::-webkit-slider-thumb:hover {
   flex-direction: column;
   gap: 28px;
   min-width: 0;
-  /* Prevent canvas from breaking grid */
+  
 }
 
 .bento-right {
@@ -1643,7 +1557,6 @@ input[type="range"]::-webkit-slider-thumb:hover {
   --cone-spread: 25;
   --fill-opacity: 0.35;
 
-  /* Default glow colors */
   --glow-color: hsl(200deg 80% 80% / 100%);
   --glow-color-60: hsl(200deg 80% 80% / 60%);
   --glow-color-50: hsl(200deg 80% 80% / 50%);
@@ -1652,7 +1565,6 @@ input[type="range"]::-webkit-slider-thumb:hover {
   --glow-color-20: hsl(200deg 80% 80% / 20%);
   --glow-color-10: hsl(200deg 80% 80% / 10%);
 
-  /* Default gradients */
   --gradient-one: radial-gradient(at 80% 55%, #c084fc 0px, transparent 50%);
   --gradient-two: radial-gradient(at 69% 34%, #f472b6 0px, transparent 50%);
   --gradient-three: radial-gradient(at 8% 6%, #38bdf8 0px, transparent 50%);
@@ -1708,7 +1620,6 @@ input[type="range"]::-webkit-slider-thumb:hover {
   transition: opacity 0.75s ease-in-out;
 }
 
-/* colored mesh-gradient border */
 .bento-card::before {
   border: 1px solid transparent;
   background:
@@ -1739,7 +1650,6 @@ input[type="range"]::-webkit-slider-thumb:hover {
       black calc((100 - var(--cone-spread)) * 1%));
 }
 
-/* colored mesh-gradient background fill near edges */
 .bento-card::after {
   border: 1px solid transparent;
   background:
@@ -1775,7 +1685,6 @@ input[type="range"]::-webkit-slider-thumb:hover {
   mix-blend-mode: soft-light;
 }
 
-/* outer glow layer */
 .bento-card>.edge-light {
   inset: calc(var(--glow-padding) * -1);
   pointer-events: none;
@@ -1853,7 +1762,6 @@ input[type="range"]::-webkit-slider-thumb:hover {
   --gradient-base: linear-gradient(#182025 0 100%);
 }
 
-/* Gradients */
 .bento-glow-yellow {
   --card-bg: linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(245, 250, 30, 0.08) 100%);
   --glow-color: hsl(55deg 95% 65% / 100%);
@@ -1895,7 +1803,6 @@ input[type="range"]::-webkit-slider-thumb:hover {
   --gradient-base: linear-gradient(#3B3BFF 0 100%);
 }
 
-/* Typography */
 .bento-card-title {
   font-size: 1.05rem;
   font-weight: 500;
@@ -1979,7 +1886,6 @@ input[type="range"]::-webkit-slider-thumb:hover {
   letter-spacing: 0.5px;
 }
 
-/* Pill Lists */
 .bento-pill-list {
   display: flex;
   flex-direction: column;
@@ -2090,7 +1996,6 @@ input[type="range"]::-webkit-slider-thumb:hover {
   text-align: right;
 }
 
-/* Sparkline & Charts */
 .bento-sparkline-container {
   height: 50px;
   margin: 6px 0;
@@ -2107,7 +2012,6 @@ input[type="range"]::-webkit-slider-thumb:hover {
   width: 100%;
 }
 
-/* Slider */
 .bento-slider-container {
   display: flex;
   align-items: center;

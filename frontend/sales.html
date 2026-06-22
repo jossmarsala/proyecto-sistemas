@@ -21,7 +21,6 @@
 </head>
 <body>
 
-<!-- SIDEBAR -->
 <aside class="sidebar">
   <div class="sidebar__cutout">
     <svg width="30" height="80" viewBox="0 0 30 80" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -69,13 +68,10 @@
     </div>
   </div>
 
-  <!-- POS LAYOUT -->
   <div class="bento-layout fade-in">
 
-    <!-- LEFT: Search + Results -->
     <div class="bento-left">
 
-      <!-- Product search -->
       <div class="bento-card bento-card--white bento-glow-yellow" style="flex:0 0 auto; z-index: 2;">
         <div class="bento-card-title"><i class="ph ph-magnifying-glass"></i> Buscador de Productos</div>
         <div style="padding-bottom:12px; margin-top: 12px;">
@@ -87,7 +83,6 @@
         </div>
       </div>
 
-      <!-- Sales history table -->
       <div class="bento-card bento-card--white bento-glow-blue-right" style="flex:1; padding: 0; display: flex; flex-direction: column; overflow: hidden;">
         <div class="bento-card-title" style="padding: 24px 26px 12px 26px; border-bottom: 1px solid rgba(0,0,0,0.04); margin-bottom: 0;"><i class="ph ph-clipboard-text"></i> Historial de Ventas</div>
         <div class="table-wrapper" style="border:none; box-shadow:none; border-radius:0; flex:1; overflow-y:auto;">
@@ -106,7 +101,6 @@
       </div>
     </div>
 
-    <!-- RIGHT: Cart -->
     <div class="bento-right">
       <div class="bento-card bento-card--white bento-glow-blue-bottom bento-card-tall" style="display: flex; flex-direction: column;">
         <div class="bento-card-title" style="display: flex; align-items: center; margin-bottom: 16px;">
@@ -135,7 +129,6 @@
 
           <div style="height: 1px; background: rgba(0,0,0,0.06); margin: 20px 0;"></div>
 
-          <!-- Payment method -->
           <div style="font-size:.78rem;font-weight:600;margin-bottom:12px; color: var(--clr-gray);">MÉTODO DE PAGO</div>
           <div class="payment-methods" style="margin-bottom: 20px;">
             <button class="payment-btn selected" data-pay="Efectivo" onclick="selectPayment(this)">
@@ -163,7 +156,6 @@
 </div>
 </main>
 
-<!-- MODAL: Select client -->
 <div class="modal-overlay" id="modal-client" onclick="if(event.target===this)closeModal('modal-client')">
   <div class="modal">
     <div class="modal-header">
@@ -184,7 +176,6 @@
   </div>
 </div>
 
-<!-- MODAL: New client -->
 <div class="modal-overlay" id="modal-new-client" onclick="if(event.target===this)closeModal('modal-new-client')">
   <div class="modal">
     <div class="modal-header">
@@ -206,7 +197,6 @@
   </div>
 </div>
 
-<!-- MODAL: Sale detail -->
 <div class="modal-overlay" id="modal-sale-detail" onclick="if(event.target===this)closeModal('modal-sale-detail')">
   <div class="modal" style="max-width:640px">
     <div class="modal-header">

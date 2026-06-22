@@ -3,18 +3,15 @@ from pydantic import BaseModel, Field
 from typing import List, Optional
 
 
-# ── Item inside a new sale ────────────────────────────────────────────────────
 
 class ItemVenta(BaseModel):
     id_producto: int = Field(..., ge=1)
     cantidad: float = Field(..., gt=0)
 
 
-# ── Request ───────────────────────────────────────────────────────────────────
-
 class VentaCreate(BaseModel):
-    id_cliente: Optional[int] = None       # optional: walk-in customer
-    id_usuario: int = Field(1, ge=1)       # defaults to admin until auth is added
+    id_cliente: Optional[int] = None       
+    id_usuario: int = Field(1, ge=1)       
     id_sucursal: int = Field(1, ge=1)
     tipo_pago: str = Field("Efectivo")
     tipo_venta: str = Field("local")
@@ -22,7 +19,6 @@ class VentaCreate(BaseModel):
     items: List[ItemVenta] = Field(..., min_length=1)
 
 
-# ── Response ──────────────────────────────────────────────────────────────────
 
 class DetalleVentaResponse(BaseModel):
     id_detalle: int

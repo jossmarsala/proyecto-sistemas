@@ -1,12 +1,5 @@
-/**
- * FARO Analytics — Chart.js ML Dashboard
- * Renders 7 interactive charts, ML forecast with CI band,
- * and per-product stock depletion predictions.
- */
 
 setActiveNav('analytics');
-
-// ── Chart instances (kept for destroy/rebuild) ────────────────────────────────
 
 const charts = {};
 
@@ -14,55 +7,45 @@ function destroyChart(id) {
   if (charts[id]) { charts[id].destroy(); delete charts[id]; }
 }
 
-// ── Chart.js global defaults ──────────────────────────────────────────────────
-
 Chart.defaults.font.family = "'Poppins', sans-serif";
-Chart.defaults.font.size   = 11;
-Chart.defaults.color       = '#7C8294';
+Chart.defaults.font.size = 11;
+Chart.defaults.color = '#7C8294';
 Chart.defaults.plugins.legend.display = false;
 Chart.defaults.plugins.tooltip.backgroundColor = '#1D2528';
-Chart.defaults.plugins.tooltip.padding         = 10;
-Chart.defaults.plugins.tooltip.cornerRadius    = 8;
-Chart.defaults.plugins.tooltip.titleFont       = { weight: '700', size: 12 };
-Chart.defaults.animation.duration              = 500;
-Chart.defaults.animation.easing               = 'easeInOutQuart';
-
-// ── Colours ───────────────────────────────────────────────────────────────────
+Chart.defaults.plugins.tooltip.padding = 10;
+Chart.defaults.plugins.tooltip.cornerRadius = 8;
+Chart.defaults.plugins.tooltip.titleFont = { weight: '700', size: 12 };
+Chart.defaults.animation.duration = 500;
+Chart.defaults.animation.easing = 'easeInOutQuart';
 
 const C = {
-  blue:       '#2727BA',
-  bluePale:   'rgba(39,39,186,0.15)',
-  blueFill:   'rgba(39,39,186,0.08)',
-  accent:     '#EFFF1D',
+  blue: '#2727BA',
+  bluePale: 'rgba(39,39,186,0.15)',
+  blueFill: 'rgba(39,39,186,0.08)',
+  accent: '#EFFF1D',
   accentFill: 'rgba(239,255,29,0.15)',
-  green:      '#22c55e',
-  greenFill:  'rgba(34,197,94,0.10)',
-  danger:     '#ef4444',
+  green: '#22c55e',
+  greenFill: 'rgba(34,197,94,0.10)',
+  danger: '#ef4444',
   dangerFill: 'rgba(239,68,68,0.10)',
-  gray:       '#7C8294',
-  dark:       '#1D2528',
-  pink:       '#E8A898',
-  // Top products palette — coherent violet/blue scale
+  gray: '#7C8294',
+  dark: '#1D2528',
+  pink: '#E8A898',
+  
   palette: [
-    '#2727BA','#3D3DC8','#5454D0','#6B6BD8','#7B7FD4',
-    '#8E91DB','#A1A4E3','#BBBDE8','#1D2528','#2C3338',
+    '#2727BA', '#3D3DC8', '#5454D0', '#6B6BD8', '#7B7FD4',
+    '#8E91DB', '#A1A4E3', '#BBBDE8', '#1D2528', '#2C3338',
   ],
 };
 
-// ── State ─────────────────────────────────────────────────────────────────────
-
 let productsCache = [];
-let forecastData  = null;
-
-// ── Helpers ───────────────────────────────────────────────────────────────────
+let forecastData = null;
 
 function getSucursal() { return document.getElementById('anl-sucursal')?.value || ''; }
-function getPeriodo()  { return document.getElementById('anl-periodo')?.value  || '60'; }
-function getFuturo()   { return document.getElementById('fc-futuro')?.value    || '30'; }
+function getPeriodo() { return document.getElementById('anl-periodo')?.value || '60'; }
+function getFuturo() { return document.getElementById('fc-futuro')?.value || '30'; }
 
 function sucursalParam() { const s = getSucursal(); return s ? `&id_sucursal=${s}` : ''; }
-
-// ── Main load orchestrator ────────────────────────────────────────────────────
 
 async function loadAll() {
   const [_forecast, _analytics] = await Promise.allSettled([
@@ -71,8 +54,6 @@ async function loadAll() {
   ]);
   loadDepletionCards();
 }
-
-// ── 1. Sales Forecast Chart ───────────────────────────────────────────────────
 
 async function loadForecast() {
   const dias_h = getPeriodo();
@@ -91,20 +72,18 @@ async function loadForecast() {
 }
 
 function updateForecastKPIs(data) {
-  // Model badge
+  
   const mb = document.getElementById('model-badge');
   mb.innerHTML = data.metodo === 'polynomial_regression' ? '<i class="ph ph-ruler"></i> Regresión Polinómica' : '<i class="ph ph-chart-bar"></i> Media Móvil';
 
-  // R² badge
   const r2el = document.getElementById('r2-badge');
   if (data.r2_score != null) {
     r2el.textContent = `R² = ${data.r2_score}`;
     r2el.style.display = 'inline-flex';
     r2el.style.background = data.r2_score > 0.7 ? '#dcfce7' : data.r2_score > 0.4 ? '#fef9c3' : '#fee2e2';
-    r2el.style.color      = data.r2_score > 0.7 ? '#15803d' : data.r2_score > 0.4 ? '#a16207' : '#b91c1c';
+    r2el.style.color = data.r2_score > 0.7 ? '#15803d' : data.r2_score > 0.4 ? '#a16207' : '#b91c1c';
   }
 
-  // Trend badge
   const tb = document.getElementById('trend-badge');
   const trendMap = { creciente: '▲ Creciente', decreciente: '▼ Decreciente', estable: '→ Estable' };
   tb.textContent = trendMap[data.tendencia] || '—';
@@ -116,9 +95,9 @@ function updateForecastKPIs(data) {
   document.getElementById('fc-mes-sub').textContent = `próximos ${getFuturo()} días`;
 
   const tendTexts = {
-    creciente:   '▲ En crecimiento',
+    creciente: '▲ En crecimiento',
     decreciente: '▼ En descenso',
-    estable:     '→ Estable',
+    estable: '→ Estable',
   };
   document.getElementById('fc-tend-val').textContent = tendTexts[data.tendencia] || '—';
   document.getElementById('fc-tend-sub').textContent = `Basado en ${data.dias_historial_usado} días de historial`;
@@ -128,40 +107,35 @@ function renderForecastChart(data) {
   destroyChart('forecast');
   const ctx = document.getElementById('chart-forecast').getContext('2d');
 
-  // Historical labels + values
-  const histLabels = data.historial.map(d => d.dia.slice(5));   // MM-DD
+  const histLabels = data.historial.map(d => d.dia.slice(5));   
   const histValues = data.historial.map(d => d.ingreso);
 
-  // Prediction labels + values
   const predLabels = data.prediccion.map(d => d.dia.slice(5));
   const predValues = data.prediccion.map(d => d.ingreso_predicho);
-  const ciLower    = data.prediccion.map(d => d.ci_lower);
-  const ciUpper    = data.prediccion.map(d => d.ci_upper);
+  const ciLower = data.prediccion.map(d => d.ci_lower);
+  const ciUpper = data.prediccion.map(d => d.ci_upper);
 
   const allLabels = [...histLabels, ...predLabels];
 
-  // Pad historical values with nulls to match full length
   const histPadded = [...histValues, ...new Array(predLabels.length).fill(null)];
   const predPadded = [...new Array(histLabels.length).fill(null), ...predValues];
-  const ciLPadded  = [...new Array(histLabels.length).fill(null), ...ciLower];
-  const ciUPadded  = [...new Array(histLabels.length).fill(null), ...ciUpper];
+  const ciLPadded = [...new Array(histLabels.length).fill(null), ...ciLower];
+  const ciUPadded = [...new Array(histLabels.length).fill(null), ...ciUpper];
 
   charts.forecast = new Chart(ctx, {
     type: 'line',
     data: {
       labels: allLabels,
       datasets: [
-        // CI upper (invisible, for fill reference)
         {
           label: 'IC Superior',
           data: ciUPadded,
           borderColor: 'transparent',
           backgroundColor: 'rgba(39,39,186,0.10)',
-          fill: '+1',  // fill to dataset below (ciLower)
+          fill: '+1',
           pointRadius: 0,
           tension: 0.3,
         },
-        // CI lower (fill reference)
         {
           label: 'IC Inferior',
           data: ciLPadded,
@@ -170,7 +144,6 @@ function renderForecastChart(data) {
           pointRadius: 0,
           tension: 0.3,
         },
-        // Historical real
         {
           label: 'Ventas reales',
           data: histPadded,
@@ -182,7 +155,7 @@ function renderForecastChart(data) {
           tension: 0.3,
           fill: false,
         },
-        // Prediction
+        
         {
           label: 'Pronóstico ML',
           data: predPadded,
@@ -215,7 +188,7 @@ function renderForecastChart(data) {
           callbacks: {
             title: items => `Día: ${items[0].label}`,
             label: item => {
-              if (['IC Superior','IC Inferior'].includes(item.dataset.label)) return null;
+              if (['IC Superior', 'IC Inferior'].includes(item.dataset.label)) return null;
               const v = item.raw;
               if (v == null) return null;
               return `  ${item.dataset.label}: ${formatCurrency(v)}`;
@@ -231,23 +204,21 @@ function renderForecastChart(data) {
         y: {
           beginAtZero: true,
           grid: { color: 'rgba(0,0,0,0.04)' },
-          ticks: { callback: v => v >= 1000 ? `$${(v/1000).toFixed(0)}k` : `$${v}` },
+          ticks: { callback: v => v >= 1000 ? `$${(v / 1000).toFixed(0)}k` : `$${v}` },
         },
       },
     },
   });
 }
 
-// ── 2. Top Products Charts ────────────────────────────────────────────────────
-
 function renderTopRevenue(productos) {
   destroyChart('top-revenue');
   const ctx = document.getElementById('chart-top-revenue').getContext('2d');
-  const sorted = [...productos].sort((a,b) => b.revenue - a.revenue).slice(0,10);
+  const sorted = [...productos].sort((a, b) => b.revenue - a.revenue).slice(0, 10);
   charts['top-revenue'] = new Chart(ctx, {
     type: 'bar',
     data: {
-      labels: sorted.map(p => p.nombre.length > 18 ? p.nombre.slice(0,18)+'…' : p.nombre),
+      labels: sorted.map(p => p.nombre.length > 18 ? p.nombre.slice(0, 18) + '…' : p.nombre),
       datasets: [{
         label: 'Ingresos',
         data: sorted.map(p => p.revenue),
@@ -264,7 +235,7 @@ function renderTopRevenue(productos) {
         tooltip: { callbacks: { label: i => `  ${formatCurrency(i.raw)}` } },
       },
       scales: {
-        x: { ticks: { callback: v => `$${(v/1000).toFixed(0)}k` }, grid: { color: 'rgba(0,0,0,0.04)' } },
+        x: { ticks: { callback: v => `$${(v / 1000).toFixed(0)}k` }, grid: { color: 'rgba(0,0,0,0.04)' } },
         y: { grid: { display: false }, ticks: { font: { weight: '600' } } },
       },
     },
@@ -274,11 +245,11 @@ function renderTopRevenue(productos) {
 function renderTopQty(productos) {
   destroyChart('top-qty');
   const ctx = document.getElementById('chart-top-qty').getContext('2d');
-  const sorted = [...productos].sort((a,b) => b.qty - a.qty).slice(0,10);
+  const sorted = [...productos].sort((a, b) => b.qty - a.qty).slice(0, 10);
   charts['top-qty'] = new Chart(ctx, {
     type: 'bar',
     data: {
-      labels: sorted.map(p => p.nombre.length > 18 ? p.nombre.slice(0,18)+'…' : p.nombre),
+      labels: sorted.map(p => p.nombre.length > 18 ? p.nombre.slice(0, 18) + '…' : p.nombre),
       datasets: [{
         label: 'Unidades',
         data: sorted.map(p => p.qty),
@@ -301,8 +272,6 @@ function renderTopQty(productos) {
     },
   });
 }
-
-// ── 3. Margin Chart ───────────────────────────────────────────────────────────
 
 function renderMarginChart(margen_diario) {
   destroyChart('margin');
@@ -346,13 +315,11 @@ function renderMarginChart(margen_diario) {
       },
       scales: {
         x: { grid: { display: false }, ticks: { maxTicksLimit: 8 } },
-        y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.04)' }, ticks: { callback: v => `$${(v/1000).toFixed(0)}k` } },
+        y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.04)' }, ticks: { callback: v => `$${(v / 1000).toFixed(0)}k` } },
       },
     },
   });
 }
-
-// ── 4. Day-of-Week Chart ──────────────────────────────────────────────────────
 
 function renderDOWChart(ventas_dow) {
   destroyChart('dow');
@@ -384,23 +351,21 @@ function renderDOWChart(ventas_dow) {
       },
       scales: {
         x: { grid: { display: false } },
-        y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.04)' }, ticks: { callback: v => `$${(v/1000).toFixed(0)}k` } },
+        y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.04)' }, ticks: { callback: v => `$${(v / 1000).toFixed(0)}k` } },
       },
     },
   });
 }
 
-// ── 5. Hourly chart ───────────────────────────────────────────────────────────
-
 function renderHoraChart(ventas_hora) {
   destroyChart('hora');
   const ctx = document.getElementById('chart-hora').getContext('2d');
-  // Only show business hours (6–22)
+  
   const biz = ventas_hora.filter(h => h.hora >= 6 && h.hora <= 22);
   charts.hora = new Chart(ctx, {
     type: 'bar',
     data: {
-      labels: biz.map(h => `${String(h.hora).padStart(2,'0')}:00`),
+      labels: biz.map(h => `${String(h.hora).padStart(2, '0')}:00`),
       datasets: [{
         label: 'Ventas',
         data: biz.map(h => h.num_ventas),
@@ -426,11 +391,9 @@ function renderHoraChart(ventas_hora) {
   });
 }
 
-// ── 6. Analytics advanced ─────────────────────────────────────────────────────
-
 async function loadAnalytics() {
   const dias = getPeriodo();
-  const suc  = getSucursal();
+  const suc = getSucursal();
   try {
     const data = await api.get(
       `/predicciones/analytics?dias=${dias}${suc ? `&id_sucursal=${suc}` : ''}`
@@ -445,19 +408,15 @@ async function loadAnalytics() {
   }
 }
 
-// ── 7. Stock Depletion cards + per-product forecast ───────────────────────────
-
 async function loadDepletionCards() {
-  const suc  = getSucursal();
+  const suc = getSucursal();
   const dias = getPeriodo();
   const container = document.getElementById('depletion-cards');
   container.innerHTML = '<div class="spinner" style="margin:20px auto"></div>';
 
   try {
-    // Get all products and forecast each (batch)
     if (!productsCache.length) {
       productsCache = await api.get(`/productos?id_sucursal=${suc || 1}&limit=500`);
-      // Populate select
       const sel = document.getElementById('prod-select');
       sel.innerHTML = '<option value="">Seleccioná un producto…</option>' +
         productsCache.map(p => `<option value="${p.id_producto}">${p.nombre}</option>`).join('');
@@ -467,7 +426,6 @@ async function loadDepletionCards() {
       `/productos/prediccion-quiebre?id_sucursal=${suc || 1}&ventana_dias=${Math.min(dias, 60)}`
     );
 
-    // Show top 8 most critical
     const sorted = [...qbData]
       .filter(d => d.promedio_diario > 0)
       .sort((a, b) => {
@@ -503,7 +461,7 @@ function selectProduct(id) {
 }
 
 async function loadProductForecast() {
-  const id  = document.getElementById('prod-select').value;
+  const id = document.getElementById('prod-select').value;
   if (!id) return;
   const suc = getSucursal();
   const dias = getPeriodo();
@@ -513,26 +471,22 @@ async function loadProductForecast() {
       `/predicciones/productos/${id}?dias_historial=${dias}&dias_futuro=30${suc ? `&id_sucursal=${suc}` : ''}`
     );
 
-    // Update model badge
     const mb = document.getElementById('prod-model-badge');
     mb.innerHTML = data.metodo === 'polynomial_regression' ? '<i class="ph ph-ruler"></i> Regresión' : '<i class="ph ph-chart-bar"></i> Media Móvil';
     mb.style.display = 'inline-flex';
 
-    // Stats
     document.getElementById('prod-stats').style.display = 'grid';
-    document.getElementById('ps-stock').textContent   = formatNumber(data.stock_actual, 1) + ' u.';
-    document.getElementById('ps-dias').textContent    = data.dias_hasta_quiebre != null ? `${data.dias_hasta_quiebre} días` : '∞';
+    document.getElementById('ps-stock').textContent = formatNumber(data.stock_actual, 1) + ' u.';
+    document.getElementById('ps-dias').textContent = data.dias_hasta_quiebre != null ? `${data.dias_hasta_quiebre} días` : '∞';
     document.getElementById('ps-ingreso').textContent = formatCurrency(data.ingreso_proyectado_30d);
 
-    // Hide empty message
     document.getElementById('prod-empty').style.display = 'none';
 
-    // Chart
     destroyChart('product');
     const ctx = document.getElementById('chart-product').getContext('2d');
     const predLabels = data.prediccion.map(d => d.dia.slice(5));
-    const predQty    = data.prediccion.map(d => d.cantidad_predicha);
-    const predStock  = data.prediccion.map(d => d.stock_proyectado);
+    const predQty = data.prediccion.map(d => d.cantidad_predicha);
+    const predStock = data.prediccion.map(d => d.stock_proyectado);
 
     charts.product = new Chart(ctx, {
       type: 'line',
@@ -590,8 +544,6 @@ async function loadProductForecast() {
   }
 }
 
-// ── Events ────────────────────────────────────────────────────────────────────
-
 async function loadSucursales() {
   try {
     const suc = await api.get('/sucursales');
@@ -601,7 +553,7 @@ async function loadSucursales() {
       o.value = s.id_sucursal; o.textContent = s.nombre;
       sel.appendChild(o);
     });
-  } catch {}
+  } catch { }
 }
 
 document.getElementById('anl-sucursal').addEventListener('change', () => {
@@ -613,5 +565,4 @@ document.getElementById('anl-periodo').addEventListener('change', () => {
   loadAll();
 });
 
-// Boot
 loadSucursales().then(loadAll);

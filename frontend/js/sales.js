@@ -1,21 +1,17 @@
 setActiveNav('sales');
 
-// ── State ──────────────────────────────────────────────────────────────────
-
-const cart = [];           // { producto, cantidad, precio_unitario_historico, subtotal }
+const cart = [];           
 let selectedClient = null;
 let selectedPayment = 'Efectivo';
 let searchTimeout = null;
 let allProducts = [];
-
-// ── Product search ─────────────────────────────────────────────────────────
 
 document.getElementById('product-search').addEventListener('input', function () {
   clearTimeout(searchTimeout);
   const q = this.value.trim();
   const dropdown = document.getElementById('search-results');
   if (!q) { dropdown.classList.remove('visible'); return; }
-  searchTimeout = setTimeout(() => doSearch(q), 280);   // <3s CU03
+  searchTimeout = setTimeout(() => doSearch(q), 280);   
 });
 
 document.addEventListener('click', e => {
@@ -61,8 +57,6 @@ async function doSearch(q) {
     dropdown.innerHTML = `<div style="padding:14px;text-align:center;color:#ef4444">${e.message}</div>`;
   }
 }
-
-// ── Cart management ────────────────────────────────────────────────────────
 
 function addToCartById(id_producto) {
   const producto = allProducts.find(p => String(p.id_producto) === String(id_producto));
@@ -147,15 +141,11 @@ function renderCart() {
   countEl.textContent = `${cart.length} item${cart.length !== 1 ? 's' : ''}`;
 }
 
-// ── Payment ────────────────────────────────────────────────────────────────
-
 function selectPayment(btn) {
   document.querySelectorAll('.payment-btn').forEach(b => b.classList.remove('selected'));
   btn.classList.add('selected');
   selectedPayment = btn.dataset.pay;
 }
-
-// ── Checkout ───────────────────────────────────────────────────────────────
 
 async function checkout() {
   if (!cart.length) { showToast('El carrito está vacío', 'warning'); return; }
@@ -183,9 +173,9 @@ async function checkout() {
     cart.length = 0;
     renderCart();
     document.getElementById('sale-ref').value = '';
-    allProducts = [];   // refresh cache
+    allProducts = [];   
     loadSalesHistory();
-    loadAlertBadge();   // update alerts after stock change
+    loadAlertBadge();   
   } catch (e) {
     showToast('Error: ' + e.message, 'error', 6000);
   } finally {
@@ -193,8 +183,6 @@ async function checkout() {
     btn.innerHTML = '<i class="ph-fill ph-lightning"></i> Finalizar y Guardar';
   }
 }
-
-// ── Client ─────────────────────────────────────────────────────────────────
 
 function clearClient() {
   selectedClient = null;
@@ -257,8 +245,6 @@ async function createClient() {
   } catch (e) { showToast(e.message, 'error'); }
 }
 
-// ── Sales history ──────────────────────────────────────────────────────────
-
 async function loadSalesHistory() {
   const tbody = document.getElementById('sales-history-body');
   tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:24px"><div class="spinner"></div></td></tr>';
@@ -318,8 +304,6 @@ async function viewSaleDetail(id) {
   }
 }
 
-// ── Client modal: load on open ─────────────────────────────────────────────
-
 document.getElementById('modal-client').addEventListener('click', function(e) {
   if (e.target === this) closeModal('modal-client');
 });
@@ -333,5 +317,4 @@ document.getElementById('client-search-input').addEventListener('input', functio
   searchTimeout = setTimeout(() => searchClients(this.value), 300);
 });
 
-// Boot
 loadSalesHistory();

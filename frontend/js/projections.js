@@ -3,8 +3,6 @@ setActiveNav('projections');
 let simTimeout = null;
 let trendData  = [];
 
-// ── Tabs ────────────────────────────────────────────────────────────────────
-
 function showTab(name, btn) {
   document.querySelectorAll('.proj-section').forEach(s => s.classList.remove('visible'));
   document.querySelectorAll('.proj-tab').forEach(b => b.classList.remove('active'));
@@ -14,8 +12,6 @@ function showTab(name, btn) {
   if (name === 'stockbreak') loadStockBreak();
   if (name === 'trend')      loadTrendChart();
 }
-
-// ── Stock Break (CU07) ─────────────────────────────────────────────────────
 
 async function loadStockBreak() {
   const suc = document.getElementById('proj-sucursal').value || 1;
@@ -63,7 +59,6 @@ function renderSBTable(data) {
     return;
   }
 
-  // Sort: critical first, then by days ascending
   const sorted = [...data].sort((a, b) => {
     if (a.alerta_quiebre && !b.alerta_quiebre) return -1;
     if (!a.alerta_quiebre && b.alerta_quiebre) return 1;
@@ -93,8 +88,6 @@ function renderSBTable(data) {
   }).join('');
 }
 
-// ── What-If Simulation (CU08) ──────────────────────────────────────────────
-
 function scheduleSimulation() {
   clearTimeout(simTimeout);
   simTimeout = setTimeout(runSimulation, 500);
@@ -119,7 +112,7 @@ async function runSimulation() {
 }
 
 function renderSimResult(r) {
-  // Big card
+  
   const isPos = r.delta.rentabilidad >= 0;
   document.getElementById('sim-rent-val').textContent = formatCurrency(r.simulado.rentabilidad);
   document.getElementById('sim-rent-delta').innerHTML =
@@ -127,19 +120,16 @@ function renderSimResult(r) {
       ${isPos ? '▲' : '▼'} ${formatCurrency(Math.abs(r.delta.rentabilidad))} (${isPos ? '+' : ''}${r.delta.porcentaje}%) vs actual
     </span>`;
 
-  // Compare boxes
   document.getElementById('sim-ing-act').textContent = formatCurrency(r.actual.ingreso_total);
   document.getElementById('sim-ing-sim').textContent = formatCurrency(r.simulado.ingreso_total);
   document.getElementById('sim-cos-act').textContent = formatCurrency(r.actual.costo_total);
   document.getElementById('sim-cos-sim').textContent = formatCurrency(r.simulado.costo_total);
 
-  // Color the result card
   const card = document.getElementById('sim-result-card');
   card.style.background = isPos
     ? 'linear-gradient(135deg, #1D2528 0%, #1a3a1a 100%)'
     : 'linear-gradient(135deg, #1D2528 0%, #3a1a1a 100%)';
 
-  // Products table
   const tbody = document.getElementById('sim-products-tbody');
   if (!r.productos.length) {
     tbody.innerHTML = '<tr class="no-data-row"><td colspan="4">Sin datos de productos</td></tr>';
@@ -158,8 +148,6 @@ function renderSimResult(r) {
   `).join('');
 }
 
-// ── Trend chart ────────────────────────────────────────────────────────────
-
 async function loadTrendChart() {
   const dias = document.getElementById('trend-period').value || 30;
   const suc  = document.getElementById('proj-sucursal').value || null;
@@ -172,7 +160,6 @@ async function loadTrendChart() {
     trendData = await api.get(`/stats/grafico?dias=${dias}${suc ? `&id_sucursal=${suc}` : ''}`);
     setTimeout(() => drawLineChart('trend-chart', trendData, 'dia', 'ingreso', '#2727BA'), 50);
 
-    // Table (only days with sales)
     const withSales = trendData.filter(d => d.ingreso > 0);
     if (!withSales.length) {
       tbody.innerHTML = '<tr class="no-data-row"><td colspan="3">Sin ventas en el período</td></tr>';
@@ -190,14 +177,12 @@ async function loadTrendChart() {
   }
 }
 
-// Resize handler
 window.addEventListener('resize', () => {
   if (document.getElementById('tab-trend').classList.contains('visible') && trendData.length) {
     drawLineChart('trend-chart', trendData, 'dia', 'ingreso', '#2727BA');
   }
 });
 
-// Load sucursales into selector
 async function loadSucursales() {
   try {
     const suc = await api.get('/sucursales');
@@ -206,7 +191,6 @@ async function loadSucursales() {
   } catch {}
 }
 
-// Boot
 loadSucursales().then(() => {
   loadStockBreak();
 });

@@ -2,9 +2,6 @@ from __future__ import annotations
 from pydantic import BaseModel, Field
 from typing import Optional
 
-
-# ── Request (input) ──────────────────────────────────────────────────────────
-
 class ClienteCreate(BaseModel):
     nombre: str = Field(..., max_length=50)
     apellido: Optional[str] = Field(None, max_length=50)
@@ -14,8 +11,6 @@ class ClienteCreate(BaseModel):
     notas: Optional[str] = None
     limite_credito: float = Field(0.0, ge=0)
 
-
-# ── Response (output) ────────────────────────────────────────────────────────
 
 class ClienteResponse(BaseModel):
     id_cliente: int

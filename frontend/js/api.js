@@ -1,10 +1,6 @@
-/* =====================================================================
-   FARO — Mini SVG Chart Library (no dependencies)
-   ===================================================================== */
+
 
 const API_BASE = 'http://localhost:8000/api/v1';
-
-// ── Fetch helpers ──────────────────────────────────────────────────────────
 
 async function apiFetch(path, options = {}) {
   const res = await fetch(`${API_BASE}${path}`, {
@@ -25,8 +21,6 @@ const api = {
   patch:  (path, body={}) => apiFetch(path, { method: 'PATCH', body: JSON.stringify(body) }),
   delete: (path)          => apiFetch(path, { method: 'DELETE' }),
 };
-
-// ── Toast system ───────────────────────────────────────────────────────────
 
 function initToasts() {
   if (!document.getElementById('toast-container')) {
@@ -50,8 +44,6 @@ function showToast(message, type = 'success', duration = 3500) {
   }, duration);
 }
 
-// ── Number formatters ──────────────────────────────────────────────────────
-
 function formatCurrency(v) {
   if (v == null) return '—';
   return new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 }).format(v);
@@ -74,8 +66,6 @@ function formatDateTime(iso) {
   return d.toLocaleString('es-AR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
 }
 
-// ── Alert badge loader ─────────────────────────────────────────────────────
-
 async function loadAlertBadge() {
   try {
     const alerts = await api.get('/alertas?solo_activas=true');
@@ -90,8 +80,6 @@ async function loadAlertBadge() {
     }
   } catch {}
 }
-
-// ── Canvas line chart ──────────────────────────────────────────────────────
 
 function drawLineChart(canvasId, data, labelKey, valueKey, color = '#2727BA', fillColor = 'rgba(39,39,186,0.08)') {
   const canvas = document.getElementById(canvasId);
@@ -114,7 +102,6 @@ function drawLineChart(canvasId, data, labelKey, valueKey, color = '#2727BA', fi
   const toX = (i) => PAD.left + i * xStep;
   const toY = (v) => PAD.top + chartH - ((v - minV) / (maxV - minV)) * chartH;
 
-  // Grid lines
   ctx.strokeStyle = 'rgba(0,0,0,0.05)';
   ctx.lineWidth = 1;
   for (let t = 0; t <= 4; t++) {
@@ -123,7 +110,7 @@ function drawLineChart(canvasId, data, labelKey, valueKey, color = '#2727BA', fi
     ctx.moveTo(PAD.left, y);
     ctx.lineTo(W - PAD.right, y);
     ctx.stroke();
-    // Y labels
+    
     const val = maxV - (maxV / 4) * t;
     ctx.fillStyle = '#7C8294';
     ctx.font = '10px Poppins, sans-serif';
@@ -131,7 +118,6 @@ function drawLineChart(canvasId, data, labelKey, valueKey, color = '#2727BA', fi
     ctx.fillText(val >= 1000 ? `$${(val/1000).toFixed(0)}k` : `$${Math.round(val)}`, PAD.left - 6, y + 4);
   }
 
-  // Fill area
   const grad = ctx.createLinearGradient(0, PAD.top, 0, H - PAD.bottom);
   grad.addColorStop(0, fillColor.replace('0.08', '0.18'));
   grad.addColorStop(1, 'rgba(255,255,255,0)');
@@ -146,7 +132,6 @@ function drawLineChart(canvasId, data, labelKey, valueKey, color = '#2727BA', fi
   ctx.fillStyle = grad;
   ctx.fill();
 
-  // Line
   ctx.beginPath();
   ctx.strokeStyle = color;
   ctx.lineWidth = 2.5;
@@ -158,7 +143,6 @@ function drawLineChart(canvasId, data, labelKey, valueKey, color = '#2727BA', fi
   });
   ctx.stroke();
 
-  // Dots & X labels
   data.forEach((d, i) => {
     const x = toX(i), y = toY(d[valueKey]);
     ctx.beginPath();
@@ -170,9 +154,8 @@ function drawLineChart(canvasId, data, labelKey, valueKey, color = '#2727BA', fi
     ctx.arc(x, y, 1.5, 0, Math.PI * 2);
     ctx.fill();
 
-    // X label (every 5th or first/last)
     if (data.length <= 10 || i % Math.ceil(data.length / 8) === 0 || i === data.length - 1) {
-      const lbl = d[labelKey].slice(5); // MM-DD
+      const lbl = d[labelKey].slice(5); 
       ctx.fillStyle = '#7C8294';
       ctx.font = '9px Poppins, sans-serif';
       ctx.textAlign = 'center';
@@ -180,8 +163,6 @@ function drawLineChart(canvasId, data, labelKey, valueKey, color = '#2727BA', fi
     }
   });
 }
-
-// ── Bar chart ──────────────────────────────────────────────────────────────
 
 function drawBarChart(canvasId, labels, values, color = '#2727BA') {
   const canvas = document.getElementById(canvasId);
@@ -215,14 +196,11 @@ function drawBarChart(canvasId, labels, values, color = '#2727BA') {
   });
 }
 
-// ── Sidebar active state ───────────────────────────────────────────────────
-
 function setActiveNav(page) {
   document.querySelectorAll('.nav-item').forEach(el => {
     el.classList.toggle('active', el.dataset.page === page);
   });
-  
-  // Move cutout
+
   const activeEl = document.querySelector('.nav-item.active');
   const cutout = document.querySelector('.sidebar__cutout');
   if (activeEl && cutout) {
@@ -231,15 +209,11 @@ function setActiveNav(page) {
   }
 }
 
-// ── Modal helpers ──────────────────────────────────────────────────────────
-
 function openModal(id)  { document.getElementById(id)?.classList.add('open'); }
 function closeModal(id) { document.getElementById(id)?.classList.remove('open'); }
 function closeAllModals() { document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('open')); }
 
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeAllModals(); });
-
-// ── Init ───────────────────────────────────────────────────────────────────
 
 document.addEventListener('DOMContentLoaded', () => {
   loadAlertBadge();

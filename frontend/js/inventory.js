@@ -4,8 +4,6 @@ let allProducts = [];
 let filtered    = [];
 let currentCat  = '';
 
-// ── Load ────────────────────────────────────────────────────────────────────
-
 async function loadInventory() {
   try {
     allProducts = await api.get('/productos?id_sucursal=1&solo_activos=false&limit=500');
@@ -111,8 +109,6 @@ function renderTable(products) {
   }).join('');
 }
 
-// ── Create product ─────────────────────────────────────────────────────────
-
 async function createProduct() {
   const nombre = document.getElementById('np-nombre').value.trim();
   const sku    = document.getElementById('np-sku').value.trim();
@@ -141,8 +137,6 @@ async function createProduct() {
     await loadInventory();
   } catch (e) { showToast(e.message, 'error'); }
 }
-
-// ── Edit product ─────────────────────────────────────────────────────────────
 
 function openEditProduct(id) {
   const p = allProducts.find(x => x.id_producto === id);
@@ -176,8 +170,6 @@ async function saveProductEdit() {
     filterTable();
   } catch (e) { showToast(e.message, 'error'); }
 }
-
-// ── Global price update (CU05) ─────────────────────────────────────────────
 
 async function applyGlobalPrice() {
   const cat = document.getElementById('gp-cat').value.trim();
