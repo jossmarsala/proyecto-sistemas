@@ -19,7 +19,6 @@ from db.connection import get_connection
 from models.venta import VentaCreate, VentaResponse, VentaDetalleCompleto, DetalleVentaResponse
 
 
-# ── Helpers ───────────────────────────────────────────────────────────────────
 
 def _row_to_venta(row: sqlite3.Row) -> VentaResponse:
     return VentaResponse(
@@ -48,22 +47,7 @@ def _row_to_detalle(row: sqlite3.Row) -> DetalleVentaResponse:
     )
 
 
-# ── Core service functions ────────────────────────────────────────────────────
-
 def crear_venta(data: VentaCreate) -> VentaDetalleCompleto:
-    """
-    Creates a new sale atomically:
-    1. Validates each item has sufficient stock.
-    2. Inserts the venta row.
-    3. Inserts one detalle_venta row per item (recording precio_unitario_historico).
-    4. Deducts stock from stock_sucursal.
-    5. If tipo_pago == 'Cuenta Corriente', appends a ledger entry and
-       updates clientes.saldo_cuenta_corriente.
-    6. Checks if any product's stock fell below stock_minimo_seguridad
-       and auto-generates an alerta if so.
-
-    Raises ValueError if stock is insufficient or product doesn't exist.
-    """
     conn = get_connection()
     try:
         conn.execute("BEGIN")
@@ -71,7 +55,6 @@ def crear_venta(data: VentaCreate) -> VentaDetalleCompleto:
         total = 0.0
         item_rows = []
 
-        # -- Validate & price each item
         for item in data.items:
             prod = conn.execute(
                 "SELECT id_producto, nombre, precio_venta FROM productos WHERE id_producto = ? AND activo = 1",
@@ -109,7 +92,7 @@ def crear_venta(data: VentaCreate) -> VentaDetalleCompleto:
 
         total = round(total, 2)
 
-        # -- Insert venta
+        
         cur = conn.execute(
             """INSERT INTO ventas (id_cliente, id_usuario, id_sucursal, tipo_pago, tipo_venta, referencia, total)
                VALUES (?, ?, ?, ?, ?, ?, ?)""",
@@ -121,7 +104,7 @@ def crear_venta(data: VentaCreate) -> VentaDetalleCompleto:
         detalle_responses: List[DetalleVentaResponse] = []
 
         for ir in item_rows:
-            # -- Insert detalle
+            
             det_cur = conn.execute(
                 """INSERT INTO detalle_venta (id_venta, id_producto, cantidad, precio_unitario_historico, subtotal)
                    VALUES (?, ?, ?, ?, ?)""",
@@ -138,7 +121,7 @@ def crear_venta(data: VentaCreate) -> VentaDetalleCompleto:
                 subtotal=ir["subtotal"],
             ))
 
-            # -- Deduct stock
+            
             conn.execute(
                 """UPDATE stock_sucursal
                    SET cantidad_actual = ?
@@ -146,7 +129,7 @@ def crear_venta(data: VentaCreate) -> VentaDetalleCompleto:
                 (ir["nueva_cantidad"], ir["id_producto"], data.id_sucursal)
             )
 
-            # -- Auto-alert if stock fell below minimum
+            
             if ir["nueva_cantidad"] < ir["stock_minimo"]:
                 conn.execute(
                     """INSERT OR IGNORE INTO alertas (tipo, id_referencia, id_sucursal, mensaje)
@@ -159,7 +142,7 @@ def crear_venta(data: VentaCreate) -> VentaDetalleCompleto:
                     )
                 )
 
-        # -- Cuenta Corriente ledger entry
+        
         if data.tipo_pago == "Cuenta Corriente" and data.id_cliente:
             cliente = conn.execute(
                 "SELECT saldo_cuenta_corriente, limite_credito FROM clientes WHERE id_cliente = ?",
@@ -185,7 +168,7 @@ def crear_venta(data: VentaCreate) -> VentaDetalleCompleto:
                 (nuevo_saldo, data.id_cliente)
             )
 
-            # -- Alert if credit limit exceeded or close
+            
             if cliente["limite_credito"] > 0 and nuevo_saldo >= cliente["limite_credito"] * 0.9:
                 conn.execute(
                     """INSERT OR IGNORE INTO alertas (tipo, id_referencia, mensaje)
@@ -199,7 +182,7 @@ def crear_venta(data: VentaCreate) -> VentaDetalleCompleto:
 
         conn.commit()
 
-        # -- Fetch back the inserted venta row for response
+        
         venta_row = conn.execute(
             "SELECT * FROM ventas WHERE id_venta = ?", (id_venta,)
         ).fetchone()

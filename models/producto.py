@@ -11,7 +11,6 @@ class ProductoCreate(BaseModel):
     precio_costo: float = Field(0.0, ge=0)
     precio_venta: float = Field(0.0, ge=0)
     id_proveedor: Optional[int] = None
-    # initial stock for the default sucursal
     stock_inicial: float = Field(0.0, ge=0)
     stock_minimo_seguridad: float = Field(0.0, ge=0)
     id_sucursal: int = Field(1, ge=1)
