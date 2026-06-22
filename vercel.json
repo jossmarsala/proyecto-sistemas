@@ -7,7 +7,7 @@
   ],
   "functions": {
     "api/**/*.py": {
-      "includeFiles": "{database/**,frontend/**}"
+      "includeFiles": "{database/**,frontend/**,db/**,services/**,controller/**,models/**,classes/**,exporter/**,*.py}"
     }
   }
 }
