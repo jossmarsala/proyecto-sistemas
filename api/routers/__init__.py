@@ -1,3 +1,2 @@
-from api.routers import ventas, productos, clientes, usuarios, sucursales, alertas
-
-__all__ = ["ventas", "productos", "clientes", "usuarios", "sucursales", "alertas"]
+# routers package — intentionally left empty.
+# Routers are imported individually in api/main.py.
