@@ -13,11 +13,7 @@
         "frontend/**",
         "db/**",
         "services/**",
-        "controller/**",
-        "models/**",
-        "classes/**",
-        "exporter/**",
-        "*.py"
+        "models/**"
       ]
     }
   }

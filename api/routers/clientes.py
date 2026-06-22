@@ -2,18 +2,13 @@ from fastapi import APIRouter, HTTPException, Query
 from pydantic import BaseModel
 from typing import List, Optional
 
-from models import ClienteCreate, ClienteResponse, MovimientoCCResponse
+from models import ClienteCreate, ClienteResponse, MovimientoCCResponse, PagoCC
 from services.cliente_service import (
     crear_cliente, listar_clientes, get_cliente,
     get_cuenta_corriente, registrar_pago_cc
 )
 
 router = APIRouter(prefix="/clientes", tags=["Clientes"])
-
-
-class PagoCC(BaseModel):
-    monto: float
-    notas: Optional[str] = None
 
 
 @router.post("", response_model=ClienteResponse, status_code=201)

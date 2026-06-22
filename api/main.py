@@ -17,6 +17,7 @@ App:   http://localhost:8000
 # be imported with their plain names.
 import sys
 import os
+from contextlib import asynccontextmanager
 from pathlib import Path
 
 _PROJECT_ROOT = Path(__file__).resolve().parent.parent
@@ -55,6 +56,11 @@ def _apply_schema() -> None:
     run_migration(SCHEMA_PATH.read_text(encoding="utf-8"))
     print("✅ FARO: Base de datos verificada / migrada correctamente.")
 
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    _apply_schema()
+    yield
+
 # ── App factory ───────────────────────────────────────────────────────────────
 
 app = FastAPI(
@@ -66,6 +72,7 @@ app = FastAPI(
     version="2.0.0",
     docs_url="/docs",
     redoc_url="/redoc",
+    lifespan=lifespan,
 )
 
 app.add_middleware(
@@ -75,12 +82,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-# ── Startup ───────────────────────────────────────────────────────────────────
-
-@app.on_event("startup")
-def on_startup():
-    _apply_schema()
 
 # ── API Routers ───────────────────────────────────────────────────────────────
 

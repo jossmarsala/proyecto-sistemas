@@ -10,7 +10,6 @@ All predictions are in-memory. Nothing is written to the DB.
 
 from __future__ import annotations
 
-import math
 from datetime import datetime, timedelta, date
 from typing import Optional
 
@@ -228,7 +227,6 @@ def predecir_ventas_globales(
     pred_sum   = sum(p["ingreso_predicho"] for p in prediccion[:30] if p["ingreso_predicho"] > 0)
     if pred_sum > 0:
         mes_proy = max(mes_proy, pred_sum)
-
 
     return {
         "metodo": "polynomial_regression",

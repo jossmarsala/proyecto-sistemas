@@ -7,19 +7,15 @@ const API_BASE = 'http://localhost:8000/api/v1';
 // ── Fetch helpers ──────────────────────────────────────────────────────────
 
 async function apiFetch(path, options = {}) {
-  try {
-    const res = await fetch(`${API_BASE}${path}`, {
-      headers: { 'Content-Type': 'application/json' },
-      ...options,
-    });
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({ detail: res.statusText }));
-      throw new Error(err.detail || res.statusText);
-    }
-    return res.json();
-  } catch (e) {
-    throw e;
+  const res = await fetch(`${API_BASE}${path}`, {
+    headers: { 'Content-Type': 'application/json' },
+    ...options,
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ detail: res.statusText }));
+    throw new Error(err.detail || res.statusText);
   }
+  return res.json();
 }
 
 const api = {

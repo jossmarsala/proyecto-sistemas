@@ -2,7 +2,7 @@
 predicciones.py — ML Forecasting Endpoints
 """
 
-from fastapi import APIRouter, Query
+from fastapi import APIRouter, Query, HTTPException
 from typing import Optional
 
 from services.prediccion_service import (
@@ -57,7 +57,6 @@ def forecast_producto(
             id_sucursal=id_sucursal,
         )
     except ValueError as e:
-        from fastapi import HTTPException
         raise HTTPException(status_code=404, detail=str(e))
 
 

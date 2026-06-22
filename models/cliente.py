@@ -43,3 +43,7 @@ class MovimientoCCResponse(BaseModel):
     fecha_hora: str
 
     model_config = {"from_attributes": True}
+
+class PagoCC(BaseModel):
+    monto: float
+    notas: Optional[str] = None
